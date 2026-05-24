@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette Master | 2026 Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glass-container">
+        <header>
+            <a href="../index.html" class="back-link">← Portfolio</a>
+            <h1>Roulette <span class="accent">Master</span></h1>
+        </header>
+
+        <main class="game-card">
+            <div id="setup-area">
+                <div class="input-label">Tambahkan Minimal 2 Target:</div>
+                <div class="input-group">
+                    <input type="text" id="item-input" placeholder="Ketik nama hadiah...">
+                    <button onclick="addItem()" class="add-btn">+</button>
+                </div>
+                <ul id="item-list" class="modern-list"></ul>
+                
+                <div id="status-container">
+                    <button id="ready-btn" class="ready-btn" onclick="goToWheel()" disabled>Add 2 More Items...</button>
+                </div>
+            </div>
+
+            <div id="game-session" style="display:none;">
+                <div class="wheel-container">
+                    <canvas id="wheelCanvas" width="300" height="300"></canvas>
+                    <div class="pointer"></div>
+                </div>
+                <div id="result-display" class="waiting">Ready to spin?</div>
+                
+                <div class="action-buttons">
+                    <button id="spin-btn" class="modern-btn" onclick="spinWheel()">SPIN NOW</button>
+                    <button class="reset-link" onclick="resetGame()">← Back & Reset</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
