@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA Extractor Pro v2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; min-height: 100vh; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
+        .drop-zone { border: 2px dashed #e2e8f0; transition: 0.3s; }
+        .drop-zone.active { border-color: #2563eb; background: rgba(37, 99, 235, 0.05); }
+        
+        /* Progress Bar Animation */
+        .progress-container { width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; display: none; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed); transition: width 0.4s ease; box-shadow: 0 0 10px rgba(37, 99, 235, 0.5); }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <div class="glass rounded-[2.5rem] p-8 shadow-2xl mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-slate-900">WA CLEANER <span class="text-blue-600">2026</span></h1>
+                <p class="text-slate-500 font-medium">Smart Deduplication • 62 Format • Multi-Format Export</p>
+                <p class="text-slate-500 font-medium">DATA WAJIB DARI ALL SALES ORDER, LANGSUNG UPLOAD</p>
+            </div>
+            <div id="actionButtons" style="display:none;" class="flex gap-3">
+                <button onclick="downloadFile('csv')" class="bg-slate-900 hover:bg-black text-white px-6 py-3 rounded-2xl font-bold transition shadow-lg text-sm">📥 CSV</button>
+                <button onclick="downloadFile('xlsx')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold transition shadow-lg text-sm">📊 EXCEL</button>
+            </div>
+        </div>
+
+        <div id="dropZone" class="glass rounded-[2.5rem] p-12 shadow-xl mb-8 text-center drop-zone cursor-pointer">
+            <div id="uploadUI">
+                <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800">Upload Data Lead</h3>
+                <p class="text-slate-400 mt-2">Seret file Excel atau CSV Anda ke sini</p>
+            </div>
+
+            <div id="progressUI" class="hidden py-6">
+                <p id="statusText" class="text-sm font-bold text-blue-600 mb-3 uppercase tracking-widest">Memproses Data...</p>
+                <div class="progress-container shadow-inner"><div id="progressBar" class="progress-bar"></div></div>
+            </div>
+            
+            <input type="file" id="fileInput" class="hidden" accept=".xlsx, .xls, .csv">
+        </div>
+
+        <div id="tableContainer" style="display:none;" class="glass rounded-[2.5rem] p-8 shadow-xl overflow-hidden animate-fade-in">
+            <table id="resultTable" class="w-full text-left">
+                <thead>
+                    <tr class="text-slate-400 text-xs uppercase font-black">
+                        <th class="p-4">Nama Pelanggan</th>
+                        <th class="p-4">Account</th>
+                        <th class="p-4 text-blue-600">Invoice (M)</th>
+                        <th class="p-4 text-green-600">Delivery (N)</th>
+                        <th class="p-4">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="text-slate-700 font-medium"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const progressBar = document.getElementById('progressBar');
+        let finalData = [];
+
+        dropZone.onclick = () => fileInput.click();
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('active'); };
+        dropZone.ondragleave = () => dropZone.classList.remove('active');
+        dropZone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+        function handleFile(file) {
+            if(!file) return;
+            // Tampilkan Progress Bar
+            document.getElementById('uploadUI').classList.add('hidden');
+            document.getElementById('progressUI').classList.remove('hidden');
+            document.querySelector('.progress-container').style.display = 'block';
+            
+            updateProgress(20, "Membaca File...");
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                updateProgress(50, "Merapikan Nomor & Hapus Duplikat...");
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                
+                setTimeout(() => processData(jsonData), 500);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function updateProgress(percent, text) {
+            progressBar.style.width = percent + "%";
+            document.getElementById('statusText').innerText = text;
+        }
+
+        function cleanPhone(val) {
+            if (!val) return "";
+            let firstPart = String(val).split(/[\\/ ,;]/)[0];
+            let num = firstPart.replace(/\D/g, '');
+            if (num.startsWith('08')) num = '62' + num.substring(1);
+            else if (num.startsWith('8')) num = '62' + num;
+            return (num.startsWith('628') && num.length >= 11 && num.length <= 15) ? num : "";
+        }
+
+        function processData(raw) {
+            const seenNumbers = new Set();
+            finalData = [];
+
+            raw.forEach(row => {
+                let inv = cleanPhone(row['Invoice contact'] || row['Invoicecontact']);
+                let del = cleanPhone(row['Delivery contact']);
+                
+                // Gunakan nomor Invoice sebagai kunci unik, jika kosong pakai Delivery
+                let primaryNum = inv || del;
+
+                if (primaryNum && !seenNumbers.has(primaryNum)) {
+                    seenNumbers.add(primaryNum);
+                    finalData.push({
+                        'Name': row['Name'] || "N/A",
+                        'Customer account': row['Customer account'] || "N/A",
+                        'Invoice contact': inv,
+                        'Delivery contact': del,
+                        'Sales amount': row['Sales amount'] || 0
+                    });
+                }
+            });
+
+            updateProgress(100, "Selesai!");
+            setTimeout(() => {
+                renderTable(finalData);
+                document.getElementById('actionButtons').style.display = 'flex';
+                document.getElementById('tableContainer').style.display = 'block';
+                document.getElementById('progressUI').classList.add('hidden');
+                document.getElementById('uploadUI').classList.remove('hidden');
+            }, 600);
+        }
+
+        function renderTable(data) {
+            if ($.fn.DataTable.isDataTable('#resultTable')) $('#resultTable').DataTable().destroy();
+            $('#resultTable').DataTable({
+                data: data,
+                columns: [
+                    { data: 'Name' },
+                    { data: 'Customer account' },
+                    { data: 'Invoice contact', render: d => d ? `<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg font-mono text-xs font-bold border border-blue-100">${d}</span>` : "" },
+                    { data: 'Delivery contact', render: d => d ? `<span class="bg-green-50 text-green-700 px-3 py-1 rounded-lg font-mono text-xs font-bold border border-green-100">${d}</span>` : "" },
+                    { data: 'Sales amount', render: d => "Rp " + new Intl.NumberFormat('id-ID').format(d) }
+                ],
+                pageLength: 5,
+                dom: '<"mb-4"f>rt<"mt-4 flex justify-between text-xs font-bold text-slate-400"ip>'
+            });
+        }
+
+        window.downloadFile = (type) => {
+            const ws = XLSX.utils.json_to_sheet(finalData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "WA_Blast_Data");
+            
+            if(type === 'csv') {
+                const csv = XLSX.utils.sheet_to_csv(ws);
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                saveAs(blob, "Data_Blast_Clean.csv");
+            } else {
+                XLSX.writeFile(wb, "Data_Blast_Clean.xlsx");
+            }
+        };
+
+        function saveAs(blob, name) {
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = name;
+            link.click();
+        }
+    </script>
+</body>
+</html>
