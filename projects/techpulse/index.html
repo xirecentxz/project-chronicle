@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <!-- ===== SEO & META ===== -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TechPulse Indonesia – Portal teknologi digital terkini. Review gadget, AI, software, dan tren digital terpercaya." />
+  <meta name="keywords" content="review teknologi, review AI, review software, gadget AI, teknologi digital, techpulse" />
+  <meta property="og:title" content="TechPulse Indonesia – Stay Ahead in Tech" />
+  <meta property="og:description" content="Portal teknologi digital terpercaya. Review AI tools, software, gadget, dan tren digital." />
+  <meta property="og:type" content="website" />
+  <title>TechPulse Indonesia – Stay Ahead in Tech</title>
+
+  <!-- ===== FONTS ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- ===== STYLES ===== -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== SKELETON LOADER ===== -->
+  <div id="page-loader" aria-hidden="true">
+    <div class="loader-logo">TP</div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" role="banner">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="container top-bar__inner">
+        <div class="top-bar__left">
+          <span>📍 Jakarta, Indonesia</span>
+          <span id="live-date"></span>
+        </div>
+        <div class="top-bar__right">
+          <!-- Dark Mode Toggle -->
+          <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode" title="Dark Mode">
+            <span class="dark-toggle__icon">🌙</span>
+          </button>
+          <!-- Search Toggle -->
+          <button class="search-toggle" id="searchToggle" aria-label="Buka pencarian">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+          <!-- Social Links -->
+          <nav class="social-links" aria-label="Media sosial">
+            <a href="#" aria-label="YouTube" class="social-link">YT</a>
+            <a href="#" aria-label="Instagram" class="social-link">IG</a>
+            <a href="#" aria-label="Facebook" class="social-link">FB</a>
+            <a href="#" aria-label="Twitter/X" class="social-link">X</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Bar (hidden by default) -->
+    <div class="search-bar" id="searchBar" hidden>
+      <div class="container">
+        <form class="search-form" role="search" novalidate>
+          <input type="search" id="searchInput" placeholder="Cari review AI, software, gadget..." aria-label="Cari konten" autocomplete="off" />
+          <button type="submit" aria-label="Cari">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+          <button type="button" id="closeSearch" aria-label="Tutup pencarian">✕</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main Nav -->
+    <nav class="main-nav" role="navigation" aria-label="Navigasi utama">
+      <div class="container main-nav__inner">
+        <!-- Logo -->
+        <a href="/" class="site-logo" aria-label="TechPulse Indonesia – Halaman Utama">
+          <span class="logo-jagat">Tech</span><span class="logo-review">Pulse</span>
+        </a>
+
+        <!-- Desktop Nav Links -->
+        <ul class="nav-links" id="navLinks" role="list">
+          <li><a href="#" class="nav-link active">Home</a></li>
+          <li class="has-dropdown">
+            <a href="#" class="nav-link">Review <span class="caret">▾</span></a>
+            <ul class="dropdown" role="list">
+              <li><a href="#">AI Tools</a></li>
+              <li><a href="#">Software</a></li>
+              <li><a href="#">Gadget AI</a></li>
+              <li><a href="#">SaaS</a></li>
+              <li><a href="#">Cloud</a></li>
+              <li><a href="#">IoT</a></li>
+            </ul>
+          </li>
+          <li class="has-dropdown">
+            <a href="#" class="nav-link">Berita <span class="caret">▾</span></a>
+            <ul class="dropdown" role="list">
+              <li><a href="#">AI & ML</a></li>
+              <li><a href="#">Startup</a></li>
+              <li><a href="#">Gadget</a></li>
+              <li><a href="#">Digital</a></li>
+            </ul>
+          </li>
+          <li><a href="#" class="nav-link">AI Corner</a></li>
+          <li><a href="#" class="nav-link">Tutorial</a></li>
+          <li><a href="#" class="nav-link">Perbandingan</a></li>
+          <li><a href="#" class="nav-link">Podcast</a></li>
+        </ul>
+
+        <!-- Hamburger Button -->
+        <button class="hamburger" id="hamburger" aria-label="Buka menu" aria-expanded="false" aria-controls="navLinks">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Category Ribbon -->
+    <div class="category-ribbon" aria-label="Kategori populer">
+      <div class="container">
+        <ul class="category-list" role="list">
+          <li><a href="#" class="cat-pill active">Semua</a></li>
+          <li><a href="#" class="cat-pill">AI Tools</a></li>
+          <li><a href="#" class="cat-pill">Software</a></li>
+          <li><a href="#" class="cat-pill">Gadget AI</a></li>
+          <li><a href="#" class="cat-pill">Cloud</a></li>
+          <li><a href="#" class="cat-pill">SaaS</a></li>
+          <li><a href="#" class="cat-pill">IoT</a></li>
+          <li><a href="#" class="cat-pill">Cybersecurity</a></li>
+          <li><a href="#" class="cat-pill">Blockchain</a></li>
+          <li><a href="#" class="cat-pill">Tutorial</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main id="main-content">
+
+    <!-- HERO SLIDER -->
+    <section class="hero-slider" aria-label="Artikel unggulan">
+      <div class="slider-track" id="sliderTrack">
+
+        <!-- Slide 1 -->
+        <article class="slide" aria-label="Slide 1">
+          <img
+            src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&q=80&fm=webp"
+            alt="Google Gemini Ultra review"
+            loading="eager"
+            width="1200" height="600"
+          />
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <span class="slide-cat">Review AI Tools</span>
+            <h2 class="slide-title">Google Gemini Ultra 2.0: AI Paling Canggih untuk Coding dan Multimodal</h2>
+            <p class="slide-meta"><span>Andre Wijaya</span> · <time datetime="2025-10-01">1 Oktober 2025</time></p>
+            <a href="#" class="btn btn-primary">Baca Review</a>
+          </div>
+        </article>
+
+        <!-- Slide 2 -->
+        <article class="slide" aria-label="Slide 2">
+          <img
+            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80&fm=webp"
+            alt="Notion AI vs Microsoft Copilot"
+            loading="lazy"
+            width="1200" height="600"
+          />
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <span class="slide-cat">Review Software</span>
+            <h2 class="slide-title">Notion AI vs Microsoft Copilot: Mana yang Lebih Meningkatkan Produktivitas?</h2>
+            <p class="slide-meta"><span>Bianca Lim</span> · <time datetime="2025-10-05">5 Oktober 2025</time></p>
+            <a href="#" class="btn btn-primary">Baca Review</a>
+          </div>
+        </article>
+
+        <!-- Slide 3 -->
+        <article class="slide" aria-label="Slide 3">
+          <img
+            src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=1200&q=80&fm=webp"
+            alt="AI PC Lenovo"
+            loading="lazy"
+            width="1200" height="600"
+          />
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <span class="slide-cat">Gadget AI</span>
+            <h2 class="slide-title">Lenovo AI PC dengan Intel Core Ultra 300: Revolusi Komputasi Masa Depan</h2>
+            <p class="slide-meta"><span>Rangga Dwi</span> · <time datetime="2025-09-28">28 September 2025</time></p>
+            <a href="#" class="btn btn-primary">Baca Selengkapnya</a>
+          </div>
+        </article>
+
+        <!-- Slide 4 -->
+        <article class="slide" aria-label="Slide 4">
+          <img
+            src="https://images.unsplash.com/photo-1633265486064-086b219458ec?w=1200&q=80&fm=webp"
+            alt="AI security tools"
+            loading="lazy"
+            width="1200" height="600"
+          />
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <span class="slide-cat">Cybersecurity</span>
+            <h2 class="slide-title">Darktrace AI: Keamanan Siber Generasi Baru dengan Machine Learning</h2>
+            <p class="slide-meta"><span>Karina Putri</span> · <time datetime="2025-10-01">1 Oktober 2025</time></p>
+            <a href="#" class="btn btn-primary">Baca Review</a>
+          </div>
+        </article>
+      </div>
+
+      <!-- Slider Controls -->
+      <button class="slider-btn slider-prev" id="sliderPrev" aria-label="Slide sebelumnya">‹</button>
+      <button class="slider-btn slider-next" id="sliderNext" aria-label="Slide berikutnya">›</button>
+      <div class="slider-dots" id="sliderDots" role="tablist" aria-label="Navigasi slide"></div>
+    </section>
+
+    <!-- ===== MAIN GRID ===== -->
+    <div class="container main-grid">
+
+      <!-- LEFT: Main Content -->
+      <div class="content-area">
+
+        <!-- LATEST REVIEWS -->
+        <section class="section reveal-section" aria-labelledby="latest-heading">
+          <div class="section-header">
+            <h2 id="latest-heading" class="section-title"><span>Review</span> Terbaru</h2>
+            <a href="#" class="see-all">Lihat Semua →</a>
+          </div>
+          <div class="card-grid">
+
+            <article class="article-card reveal-item">
+              <a href="#" class="card-img-link">
+                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=75&fm=webp" alt="Midjourney 7 review" loading="lazy" width="600" height="340" />
+                <span class="card-badge">Review</span>
+              </a>
+              <div class="card-body">
+                <span class="card-cat">AI Tools</span>
+                <h3><a href="#">Midjourney 7: Generator Gambar AI dengan Realisme yang Sulit Dibedakan dari Foto Asli</a></h3>
+                <p>Midjourney versi terbaru menghadirkan peningkatan drastis dalam hal tekstur, pencahayaan, dan detail. Cocok untuk desainer profesional.</p>
+                <div class="card-meta">
+                  <span class="card-author">Andre Wijaya</span>
+                  <time datetime="2025-09-30">30 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="article-card reveal-item">
+              <a href="#" class="card-img-link">
+                <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600&q=75&fm=webp" alt="Cursor AI code editor" loading="lazy" width="600" height="340" />
+                <span class="card-badge">Review</span>
+              </a>
+              <div class="card-body">
+                <span class="card-cat">Software</span>
+                <h3><a href="#">Cursor AI: Code Editor dengan AI Paling Cerdas untuk Developer</a></h3>
+                <p>Cursor AI mengubah cara menulis kode dengan autocompletion kontekstual dan debugging berbasis AI. Kami menguji performanya selama 2 minggu.</p>
+                <div class="card-meta">
+                  <span class="card-author">Bianca Lim</span>
+                  <time datetime="2025-09-27">27 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="article-card reveal-item">
+              <a href="#" class="card-img-link">
+                <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600&q=75&fm=webp" alt="Rabbit R2 AI gadget" loading="lazy" width="600" height="340" />
+                <span class="card-badge">Review</span>
+              </a>
+              <div class="card-body">
+                <span class="card-cat">Gadget AI</span>
+                <h3><a href="#">Rabbit R2: Gadget AI Revolusioner atau Hanya Tren Sesaat?</a></h3>
+                <p>Rabbit R2 hadir sebagai pendamping berbasis AI yang bisa mengerjakan berbagai tugas tanpa smartphone. Apakah ini masa depan?</p>
+                <div class="card-meta">
+                  <span class="card-author">Rangga Dwi</span>
+                  <time datetime="2025-09-25">25 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="article-card reveal-item">
+              <a href="#" class="card-img-link">
+                <img src="https://images.unsplash.com/photo-1655720828018-edd2daec9349?w=600&q=75&fm=webp" alt="AI video generator" loading="lazy" width="600" height="340" />
+                <span class="card-badge">Review</span>
+              </a>
+              <div class="card-body">
+                <span class="card-cat">AI Tools</span>
+                <h3><a href="#">Runway Gen-4: Generator Video AI yang Bisa Bikin Film Pendek Sendiri</a></h3>
+                <p>Dengan peningkatan resolusi dan konsistensi karakter, Runway Gen-4 memungkinkan kreator menghasilkan video sinematik tanpa kamera.</p>
+                <div class="card-meta">
+                  <span class="card-author">Karina Putri</span>
+                  <time datetime="2025-09-22">22 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="article-card reveal-item">
+              <a href="#" class="card-img-link">
+                <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=75&fm=webp" alt="SaaS management" loading="lazy" width="600" height="340" />
+                <span class="card-badge">Review</span>
+              </a>
+              <div class="card-body">
+                <span class="card-cat">SaaS</span>
+                <h3><a href="#">Notion AI Workspace: Apakah Fitur AI Premium Sebanding dengan Harganya?</a></h3>
+                <p>Notion merilis paket AI terintegrasi. Kami uji coba untuk tim produktivitas dan bandingkan dengan alternatif lain.</p>
+                <div class="card-meta">
+                  <span class="card-author">Andre Wijaya</span>
+                  <time datetime="2025-09-20">20 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="article-card reveal-item">
+              <a href="#" class="card-img-link">
+                <img src="https://images.unsplash.com/photo-1605745348051-b859f4662c9c?w=600&q=75&fm=webp" alt="AI cybersecurity" loading="lazy" width="600" height="340" />
+                <span class="card-badge">Review</span>
+              </a>
+              <div class="card-body">
+                <span class="card-cat">Cybersecurity</span>
+                <h3><a href="#">CrowdStrike Falcon AI: Deteksi Ancaman Real-Time dengan Machine Learning</a></h3>
+                <p>Solusi keamanan siber berbasis AI ini menjanjikan deteksi anomaly tanpa signature. Kami uji di lingkungan perusahaan.</p>
+                <div class="card-meta">
+                  <span class="card-author">Karina Putri</span>
+                  <time datetime="2025-09-18">18 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- HOT NEWS SECTION -->
+        <section class="section reveal-section" aria-labelledby="news-heading">
+          <div class="section-header">
+            <h2 id="news-heading" class="section-title"><span>Berita</span> Terpanas</h2>
+            <a href="#" class="see-all">Lihat Semua →</a>
+          </div>
+          <div class="news-list">
+
+            <article class="news-item reveal-item">
+              <a href="#" class="news-img-link">
+                <img src="https://images.unsplash.com/photo-1488229297570-58520851e868?w=300&q=75&fm=webp" alt="OpenAI GPT-5" loading="lazy" width="300" height="200" />
+              </a>
+              <div class="news-content">
+                <span class="card-cat">AI & ML</span>
+                <h3><a href="#">OpenAI Resmi Luncurkan GPT-5: Kemampuan Reasoning Setara Manusia?</a></h3>
+                <p class="news-excerpt">OpenAI mengumumkan GPT-5 dengan peningkatan drastis di penalaran logis dan memori jangka panjang. Tersedia untuk developer minggu depan.</p>
+                <div class="card-meta">
+                  <span class="card-author">Deva Nea</span>
+                  <time datetime="2025-10-02">2 Okt 2025</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="news-item reveal-item">
+              <a href="#" class="news-img-link">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300&q=75&fm=webp" alt="Startup AI Indonesia" loading="lazy" width="300" height="200" />
+              </a>
+              <div class="news-content">
+                <span class="card-cat">Startup</span>
+                <h3><a href="#">Startup AI Indonesia Dapat Pendanaan Seri A US$15 Juta dari Accel</a></h3>
+                <p class="news-excerpt">Banyak orang bertanya-tanya bagaimana startup AI lokal bisa bersaing dengan raksasa global. Fokus pada solusi hyperlocal menjadi kunci sukses.</p>
+                <div class="card-meta">
+                  <span class="card-author">Naufal Ramadhan</span>
+                  <time datetime="2025-10-01">1 Okt 2025</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="news-item reveal-item">
+              <a href="#" class="news-img-link">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=300&q=75&fm=webp" alt="AI chip Nvidia" loading="lazy" width="300" height="200" />
+              </a>
+              <div class="news-content">
+                <span class="card-cat">Hardware AI</span>
+                <h3><a href="#">Nvidia B200 Ultra: AI Chip Terbaru dengan Performa 30x Lipat dari Pendahulu</a></h3>
+                <p class="news-excerpt">Nvidia mengumumkan chip AI generasi baru untuk data center yang diklaim mampu menjalankan model dengan 1 triliun parameter.</p>
+                <div class="card-meta">
+                  <span class="card-author">Rangga Dwi</span>
+                  <time datetime="2025-09-29">29 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+
+            <article class="news-item reveal-item">
+              <a href="#" class="news-img-link">
+                <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=300&q=75&fm=webp" alt="AI regulation" loading="lazy" width="300" height="200" />
+              </a>
+              <div class="news-content">
+                <span class="card-cat">Digital</span>
+                <h3><a href="#">Undang-Undang Kecerdasan Buatan Resmi Disahkan di Indonesia</a></h3>
+                <p class="news-excerpt">DPR mengesahkan UU AI pertama di Indonesia yang mengatur etika, transparansi, dan akuntabilitas sistem kecerdasan buatan.</p>
+                <div class="card-meta">
+                  <span class="card-author">Deva Nea</span>
+                  <time datetime="2025-09-26">26 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- AI CORNER SECTION -->
+        <section class="section reveal-section" aria-labelledby="ai-heading">
+          <div class="section-header">
+            <h2 id="ai-heading" class="section-title"><span class="accent-red">AI</span> Corner</h2>
+            <a href="#" class="see-all">Lihat Semua →</a>
+          </div>
+          <div class="gaming-grid">
+            <article class="gaming-featured reveal-item">
+              <a href="#" class="card-img-link">
+                <img src="https://images.unsplash.com/photo-1675557009875-436f6bf5f0bc?w=700&q=75&fm=webp" alt="LLM comparison" loading="lazy" width="700" height="400" />
+                <span class="card-badge badge-red">AI Corner</span>
+              </a>
+              <div class="card-body">
+                <h3><a href="#">Perbandingan LLM Terbaik 2025: GPT-5 vs Gemini Ultra vs Claude 4</a></h3>
+                <p>Kami menguji tiga model bahasa besar terkemuka dalam berbagai skenario: coding, kreativitas, analisis data, dan logika. Siapa pemenangnya?</p>
+                <div class="card-meta">
+                  <span class="card-author">Andre Wijaya</span>
+                  <time datetime="2025-09-23">23 Sep 2025</time>
+                </div>
+              </div>
+            </article>
+            <div class="gaming-sidebar">
+              <article class="gaming-small reveal-item">
+                <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=200&q=75&fm=webp" alt="AI prompt engineering" loading="lazy" width="200" height="120" />
+                <div>
+                  <span class="card-cat">AI Tools</span>
+                  <h4><a href="#">10 Teknik Prompt Engineering untuk Hasil Maksimal dari GPT-5</a></h4>
+                  <time datetime="2025-09-19">19 Sep 2025</time>
+                </div>
+              </article>
+              <article class="gaming-small reveal-item">
+                <img src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=200&q=75&fm=webp" alt="AI image generator" loading="lazy" width="200" height="120" />
+                <div>
+                  <span class="card-cat">AI Tools</span>
+                  <h4><a href="#">Midjourney 7 vs DALL-E 4: Mana Generator Gambar AI Terbaik?</a></h4>
+                  <time datetime="2025-09-15">15 Sep 2025</time>
+                </div>
+              </article>
+              <article class="gaming-small reveal-item">
+                <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=200&q=75&fm=webp" alt="AI coding assistant" loading="lazy" width="200" height="120" />
+                <div>
+                  <span class="card-cat">Software</span>
+                  <h4><a href="#">GitHub Copilot vs Cursor AI: Asisten Coding Terbaik untuk Developer</a></h4>
+                  <time datetime="2025-09-12">12 Sep 2025</time>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- TUTORIAL SECTION -->
+        <section class="section reveal-section" aria-labelledby="tutorial-heading">
+          <div class="section-header">
+            <h2 id="tutorial-heading" class="section-title"><span>Tutorial</span> & Panduan</h2>
+            <a href="#" class="see-all">Lihat Semua →</a>
+          </div>
+          <div class="tips-grid">
+            <article class="tips-card reveal-item">
+              <div class="tips-icon">🤖</div>
+              <div>
+                <h3><a href="#">Cara Membuat AI Assistant Pribadi dengan Langchain dan GPT-5</a></h3>
+                <p>Panduan lengkap membuat asisten AI custom untuk kebutuhan spesifikmu menggunakan framework open-source.</p>
+                <div class="card-meta"><span class="card-author">Rangga Dwi</span><time>10 Sep 2025</time></div>
+              </div>
+            </article>
+            <article class="tips-card reveal-item">
+              <div class="tips-icon">📊</div>
+              <div>
+                <h3><a href="#">Panduan Analisis Data dengan ChatGPT Advanced Analytics</a></h3>
+                <p>Manfaatkan fitur code interpreter ChatGPT untuk menganalisis data CSV, membuat visualisasi, dan insight instan.</p>
+                <div class="card-meta"><span class="card-author">Bianca Lim</span><time>8 Sep 2025</time></div>
+              </div>
+            </article>
+            <article class="tips-card reveal-item">
+              <div class="tips-icon">🎨</div>
+              <div>
+                <h3><a href="#">Cara Mengoptimalkan Prompt untuk Hasil Video AI yang Sinematik</a></h3>
+                <p>Tips dari kreator profesional untuk menghasilkan video AI berkualitas sinematik dengan Runway Gen-4.</p>
+                <div class="card-meta"><span class="card-author">Karina Putri</span><time>5 Sep 2025</time></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+      </div><!-- /content-area -->
+
+      <!-- RIGHT: Sidebar -->
+      <aside class="sidebar" role="complementary" aria-label="Sidebar">
+
+        <!-- Trending -->
+        <div class="widget reveal-item">
+          <h3 class="widget-title">🔥 Trending</h3>
+          <ol class="trending-list" role="list">
+            <li><a href="#">GPT-5 Resmi Rilis: Kemampuan Terbaru yang Mengubah Permainan</a></li>
+            <li><a href="#">Midjourney 7 vs DALL-E 4: Perbandingan Generator AI Gambar 2025</a></li>
+            <li><a href="#">5 AI Tools untuk Produktivitas Kerja yang Wajib Dicoba</a></li>
+            <li><a href="#">Cara Membuat Website dengan AI: Tanpa Coding Satu Baris Pun</a></li>
+            <li><a href="#">Review Lenovo AI PC: Masa Depan Komputasi Pribadi?</a></li>
+            <li><a href="#">OpenAI vs Google: Siapa Pemenang di Battle AI 2025?</a></li>
+            <li><a href="#">Panduan Etika AI untuk Perusahaan dan Developer</a></li>
+          </ol>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="widget widget-newsletter reveal-item">
+          <h3 class="widget-title">📬 Newsletter</h3>
+          <p>Dapatkan review AI tools dan berita teknologi digital terbaru langsung di inbox kamu.</p>
+          <form class="newsletter-form" novalidate id="newsletterForm">
+            <div class="form-group">
+              <input type="email" id="emailInput" placeholder="Masukkan email kamu" aria-label="Alamat email" required />
+              <span class="form-error" id="emailError" role="alert" hidden>Masukkan email yang valid.</span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Daftar Sekarang</button>
+            <p class="form-disclaimer">Tidak ada spam. Unsubscribe kapan saja.</p>
+          </form>
+        </div>
+
+        <!-- Top Picks -->
+        <div class="widget reveal-item">
+          <h3 class="widget-title">⭐ Editor's Choice</h3>
+          <div class="editor-picks">
+            <a href="#" class="pick-item">
+              <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=120&q=75&fm=webp" alt="AI pilihan editor" loading="lazy" width="120" height="80" />
+              <div>
+                <span class="card-cat">AI Tools</span>
+                <p>GPT-5 Turbo</p>
+                <span class="rating">★★★★★ 9.7/10</span>
+              </div>
+            </a>
+            <a href="#" class="pick-item">
+              <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=120&q=75&fm=webp" alt="Software pilihan editor" loading="lazy" width="120" height="80" />
+              <div>
+                <span class="card-cat">Software</span>
+                <p>Cursor AI Pro</p>
+                <span class="rating">★★★★★ 9.4/10</span>
+              </div>
+            </a>
+            <a href="#" class="pick-item">
+              <img src="https://images.unsplash.com/photo-1633265486064-086b219458ec?w=120&q=75&fm=webp" alt="AI security pilihan editor" loading="lazy" width="120" height="80" />
+              <div>
+                <span class="card-cat">Cybersecurity</span>
+                <p>Darktrace AI</p>
+                <span class="rating">★★★★★ 9.2/10</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Social Follow -->
+        <div class="widget widget-social reveal-item">
+          <h3 class="widget-title">Ikuti Kami</h3>
+          <div class="social-follow-grid">
+            <a href="#" class="follow-btn follow-yt" aria-label="Ikuti di YouTube">
+              <span class="follow-icon">▶</span>
+              <span class="follow-info"><strong>YouTube</strong><small>210K Subscribers</small></span>
+            </a>
+            <a href="#" class="follow-btn follow-ig" aria-label="Ikuti di Instagram">
+              <span class="follow-icon">◉</span>
+              <span class="follow-info"><strong>Instagram</strong><small>95K Followers</small></span>
+            </a>
+            <a href="#" class="follow-btn follow-fb" aria-label="Ikuti di Facebook">
+              <span class="follow-icon">f</span>
+              <span class="follow-info"><strong>Facebook</strong><small>67K Likes</small></span>
+            </a>
+            <a href="#" class="follow-btn follow-tw" aria-label="Ikuti di Twitter">
+              <span class="follow-icon">𝕏</span>
+              <span class="follow-info"><strong>Twitter / X</strong><small>38K Followers</small></span>
+            </a>
+          </div>
+        </div>
+
+      </aside>
+    </div><!-- /main-grid -->
+
+    <!-- ===== FEATURED PODCAST SECTION ===== -->
+    <section class="video-section reveal-section" aria-labelledby="podcast-heading">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="podcast-heading" class="section-title"><span>Podcast</span> Terbaru</h2>
+          <a href="#" class="see-all">Lihat di Spotify →</a>
+        </div>
+        <div class="video-grid">
+          <article class="video-card reveal-item">
+            <a href="#" class="video-thumb">
+              <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=500&q=75&fm=webp" alt="Podcast AI" loading="lazy" width="500" height="280" />
+              <span class="play-btn" aria-hidden="true">▶</span>
+              <span class="vid-duration">45:12</span>
+            </a>
+            <div class="video-info">
+              <h3><a href="#">Eps 1: Masa Depan AI di Indonesia Bersama Pakar Teknologi</a></h3>
+              <span>25K views · 3 hari lalu</span>
+            </div>
+          </article>
+          <article class="video-card reveal-item">
+            <a href="#" class="video-thumb">
+              <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=500&q=75&fm=webp" alt="Podcast startup" loading="lazy" width="500" height="280" />
+              <span class="play-btn" aria-hidden="true">▶</span>
+              <span class="vid-duration">38:21</span>
+            </a>
+            <div class="video-info">
+              <h3><a href="#">Eps 2: Cerita Founder Startup AI Indonesia yang Mendunia</a></h3>
+              <span>18K views · 5 hari lalu</span>
+            </div>
+          </article>
+          <article class="video-card reveal-item">
+            <a href="#" class="video-thumb">
+              <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&q=75&fm=webp" alt="Podcast coding" loading="lazy" width="500" height="280" />
+              <span class="play-btn" aria-hidden="true">▶</span>
+              <span class="vid-duration">52:15</span>
+            </a>
+            <div class="video-info">
+              <h3><a href="#">Eps 3: GPT-5 vs Gemini Ultra – Siapa yang Menang?</a></h3>
+              <span>42K views · 1 minggu lalu</span>
+            </div>
+          </article>
+          <article class="video-card reveal-item">
+            <a href="#" class="video-thumb">
+              <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=500&q=75&fm=webp" alt="Podcast karir AI" loading="lazy" width="500" height="280" />
+              <span class="play-btn" aria-hidden="true">▶</span>
+              <span class="vid-duration">41:08</span>
+            </a>
+            <div class="video-info">
+              <h3><a href="#">Eps 4: Persiapan Karir di Bidang AI dan Data Science</a></h3>
+              <span>31K views · 1 minggu lalu</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="site-logo footer-logo" aria-label="TechPulse Indonesia">
+          <span class="logo-jagat">Tech</span><span class="logo-review">Pulse</span>
+        </a>
+        <p>Portal teknologi digital terpercaya di Indonesia. <em>Stay Ahead in Tech.</em></p>
+        <div class="footer-social">
+          <a href="#" aria-label="YouTube">▶</a>
+          <a href="#" aria-label="Instagram">◉</a>
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Twitter">𝕏</a>
+          <a href="#" aria-label="TikTok">♪</a>
+        </div>
+      </div>
+      <nav class="footer-nav" aria-label="Kategori review">
+        <h4>Kategori</h4>
+        <ul role="list">
+          <li><a href="#">AI Tools</a></li>
+          <li><a href="#">Software</a></li>
+          <li><a href="#">Gadget AI</a></li>
+          <li><a href="#">SaaS</a></li>
+          <li><a href="#">Cloud</a></li>
+          <li><a href="#">IoT</a></li>
+          <li><a href="#">Cybersecurity</a></li>
+          <li><a href="#">Blockchain</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-nav" aria-label="Konten">
+        <h4>Konten</h4>
+        <ul role="list">
+          <li><a href="#">Berita AI</a></li>
+          <li><a href="#">Tutorial & Panduan</a></li>
+          <li><a href="#">Perbandingan</a></li>
+          <li><a href="#">Editor's Choice</a></li>
+          <li><a href="#">Podcast</a></li>
+          <li><a href="#">AI Tools Database</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-nav" aria-label="Perusahaan">
+        <h4>Perusahaan</h4>
+        <ul role="list">
+          <li><a href="#">Tentang Kami</a></li>
+          <li><a href="#">Tim Editorial</a></li>
+          <li><a href="#">Kebijakan Review</a></li>
+          <li><a href="#">Advertise</a></li>
+          <li><a href="#">Karir</a></li>
+          <li><a href="#">Kontak</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom__inner">
+        <p>© 2025 TechPulse Indonesia — Hak Cipta Dilindungi</p>
+        <nav aria-label="Legal">
+          <a href="#">Kebijakan Privasi</a>
+          <a href="#">Syarat & Ketentuan</a>
+          <a href="#">Cookie Policy</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="backToTop" aria-label="Kembali ke atas" hidden>↑</button>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script src="main.js"></script>
+</body>
+</html>
