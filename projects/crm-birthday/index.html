@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Birthday Pro - Modern Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.4/luxon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, .font-heading { font-family: 'Outfit', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .gradient-primary { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); }
+        .hover-scale { transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .hover-scale:hover { transform: scale(1.02); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-900 min-h-screen">
+
+    <div class="max-w-6xl mx-auto p-6 md:p-10">
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+            <div class="space-y-1">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 gradient-primary rounded-lg shadow-lg shadow-blue-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor font-bold">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl font-black tracking-tight text-slate-800 uppercase italic">CRM <span class="text-blue-600">PRO</span></h1>
+                </div>
+                <p class="text-slate-500 font-medium ml-1">Automated Birthday Monitoring System</p>
+            </div>
+            
+            <div id="downloadArea" class="hidden">
+                <button onclick="downloadExcel()" class="group flex items-center gap-3 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-slate-700 px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    Export Report
+                </button>
+            </div>
+        </header>
+
+        <div class="mb-10 group">
+            <label class="relative overflow-hidden flex flex-col items-center justify-center w-full h-40 border-2 border-slate-200 border-dashed rounded-3xl cursor-pointer bg-white transition-all hover:border-blue-400 hover:bg-blue-50/50">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <div class="mb-3 p-3 bg-blue-100 rounded-full text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                    </div>
+                    <p id="fileStatus" class="mb-1 text-sm font-bold text-slate-700">Drop your Excel file here</p>
+                    <p class="text-xs text-slate-400 font-medium italic" id="fileNameDisp">Supported: .xlsx, .xls</p>
+                </div>
+                <input type="file" id="excelFile" accept=".xlsx, .xls" class="hidden" />
+            </label>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 hidden" id="statsArea">
+            <div class="glass-card p-7 rounded-[2rem] shadow-sm border-rose-100 hover-scale">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="p-2 bg-rose-100 text-rose-600 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" /></svg></span>
+                    <span class="text-[10px] font-black text-rose-500 uppercase tracking-[0.2em]">Today</span>
+                </div>
+                <h3 class="text-5xl font-black text-slate-800 tracking-tighter" id="count-today">0</h3>
+                <p class="text-slate-400 text-sm mt-1 font-medium">Customer's Special Day</p>
+            </div>
+            
+            <div class="glass-card p-7 rounded-[2rem] shadow-sm border-amber-100 hover-scale">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="p-2 bg-amber-100 text-amber-600 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" /></svg></span>
+                    <span class="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em]">Upcoming 7D</span>
+                </div>
+                <h3 class="text-5xl font-black text-slate-800 tracking-tighter" id="count-week">0</h3>
+                <p class="text-slate-400 text-sm mt-1 font-medium">Next Week Events</p>
+            </div>
+
+            <div class="glass-card p-7 rounded-[2rem] shadow-sm border-blue-100 hover-scale">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="p-2 bg-blue-100 text-blue-600 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" /></svg></span>
+                    <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">Monthly</span>
+                </div>
+                <h3 class="text-5xl font-black text-slate-800 tracking-tighter" id="count-month">0</h3>
+                <p class="text-slate-400 text-sm mt-1 font-medium">30 Days Forecast</p>
+            </div>
+        </div>
+
+        <div id="controls" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="relative group">
+                <input type="text" id="searchInput" placeholder="Search by name..." class="w-full pl-12 pr-4 py-4 rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-400 font-medium">
+                <div class="absolute left-4 top-4.5 text-slate-300 group-focus-within:text-blue-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+            </div>
+            <div class="relative">
+                <select id="statusFilter" class="appearance-none w-full px-6 py-4 rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white font-semibold text-slate-600 cursor-pointer">
+                    <option value="ALL">Show All (1 Month)</option>
+                    <option value="TODAY">Filter: Today's Celebrants</option>
+                    <option value="THIS WEEK">Filter: This Week</option>
+                    <option value="THIS MONTH">Filter: This Month</option>
+                </select>
+                <div class="absolute right-4 top-5 text-slate-400 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                </div>
+            </div>
+        </div>
+
+        <div id="tableContainer" class="hidden bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-slate-50/50 border-b border-slate-100">
+                            <th class="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">Customer Details</th>
+                            <th class="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Urgency</th>
+                            <th class="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">Birthday Date</th>
+                            <th class="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">Category</th>
+                            <th class="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultBody" class="divide-y divide-slate-50"></tbody>
+                </table>
+            </div>
+            <div id="noData" class="hidden py-32 text-center">
+                <div class="inline-flex p-5 bg-slate-50 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
+                </div>
+                <p class="text-slate-400 text-lg font-semibold italic">No matching birthday data found...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const monthMap = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12};
+        let globalData = [];
+        let filteredData = [];
+
+        document.getElementById('excelFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            document.getElementById('fileNameDisp').innerText = file.name;
+            document.getElementById('fileStatus').innerText = "DATABASE SYNCED";
+            document.getElementById('fileStatus').classList.add('text-blue-600');
+            
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const workbook = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+                const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                processInitialData(jsonData);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function processInitialData(data) {
+            const today = luxon.DateTime.now().startOf('day');
+            globalData = data.map(row => {
+                const day = parseInt(row['Anniversary day']);
+                const month = monthMap[row['Anniversary month']];
+                if (!day || !month) return null;
+
+                let bday = luxon.DateTime.fromObject({ year: today.year, month: month, day: day });
+                if (bday < today) bday = bday.plus({ years: 1 });
+
+                const diff = bday.diff(today, 'days').days;
+                let status = "";
+                if (diff === 0) status = "TODAY";
+                else if (diff > 0 && diff <= 7) status = "THIS WEEK";
+                else if (diff > 7 && diff <= 30) status = "THIS MONTH";
+
+                return status ? { 
+                    ...row, 
+                    h_val: Math.floor(diff), 
+                    calculatedStatus: status,
+                    formattedDate: `${day} ${row['Anniversary month']}`
+                } : null;
+            }).filter(x => x !== null).sort((a, b) => a.h_val - b.h_val);
+
+            updateStats();
+            showView();
+            renderTable();
+        }
+
+        function updateStats() {
+            document.getElementById('count-today').innerText = globalData.filter(d => d.calculatedStatus === "TODAY").length;
+            document.getElementById('count-week').innerText = globalData.filter(d => d.calculatedStatus === "THIS WEEK").length;
+            document.getElementById('count-month').innerText = globalData.filter(d => d.calculatedStatus === "THIS MONTH").length;
+        }
+
+        function showView() {
+            ['statsArea', 'controls', 'tableContainer', 'downloadArea'].forEach(id => {
+                document.getElementById(id).classList.remove('hidden');
+                document.getElementById(id).classList.add('animate-in', 'fade-in', 'slide-in-from-bottom-4', 'duration-700');
+            });
+        }
+
+        function renderTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterValue = document.getElementById('statusFilter').value;
+            const tbody = document.getElementById('resultBody');
+            
+            filteredData = globalData.filter(item => {
+                const matchName = item.Name.toLowerCase().includes(searchTerm);
+                const matchStatus = filterValue === "ALL" || item.calculatedStatus === filterValue;
+                return matchName && matchStatus;
+            });
+
+            tbody.innerHTML = '';
+            if (filteredData.length === 0) {
+                document.getElementById('noData').classList.remove('hidden');
+            } else {
+                document.getElementById('noData').classList.add('hidden');
+                filteredData.forEach(row => {
+                    const wa = row.Telephone ? row.Telephone.toString().replace(/[^0-9]/g, '') : '';
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50/80 transition-colors group";
+                    tr.innerHTML = `
+                        <td class="px-8 py-6">
+                            <div class="font-bold text-slate-800 text-lg group-hover:text-blue-600 transition-colors">${row.Name}</div>
+                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-0.5">${row['Customer account'] || 'NO ACCOUNT'}</div>
+                        </td>
+                        <td class="px-8 py-6 text-center font-black">
+                            <span class="text-xl ${row.h_val === 0 ? 'text-rose-600 animate-pulse' : 'text-slate-700'}">
+                                ${row.h_val === 0 ? 'H-0' : 'H-' + row.h_val}
+                            </span>
+                        </td>
+                        <td class="px-8 py-6 text-slate-500 font-semibold">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                ${row.formattedDate}
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <span class="px-3 py-1.5 rounded-full text-[9px] font-black tracking-widest uppercase shadow-sm border ${getStatusClass(row.calculatedStatus)}">
+                                ${row.calculatedStatus}
+                            </span>
+                        </td>
+                        <td class="px-8 py-6 text-center">
+                            ${wa ? `<a href="https://wa.me/${wa}" target="_blank" class="bg-white border border-emerald-500 text-emerald-600 hover:bg-emerald-600 hover:text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all inline-flex items-center gap-2 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 0 5.415 0 12.05c0 2.12.554 4.189 1.605 6.006L0 24l6.152-1.614a11.82 11.82 0 005.892 1.568h.005c6.636 0 12.05-5.414 12.05-12.051 0-3.218-1.253-6.244-3.528-8.517z"/></svg>
+                                WhatsApp
+                            </a>` : '<span class="text-slate-300 italic text-xs font-medium">No Contact</span>'}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function getStatusClass(status) {
+            if (status === "TODAY") return "bg-rose-50 text-rose-600 border-rose-100";
+            if (status === "THIS WEEK") return "bg-amber-50 text-amber-600 border-amber-100";
+            return "bg-blue-50 text-blue-600 border-blue-100";
+        }
+
+        function downloadExcel() {
+            if (filteredData.length === 0) return alert("No data available to export");
+            const exportData = filteredData.map(({ h_val, calculatedStatus, formattedDate, ...rest }) => ({
+                'Name': rest.Name,
+                'WhatsApp': rest.Telephone,
+                'Birthday': formattedDate,
+                'H-Days': h_val,
+                'Urgency': calculatedStatus
+            }));
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Birthday_Report");
+            XLSX.writeFile(workbook, `CRM_Birthday_Report_${luxon.DateTime.now().toFormat('yyyyMMdd')}.xlsx`);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderTable);
+        document.getElementById('statusFilter').addEventListener('change', renderTable);
+    </script>
+</body>
+</html>
