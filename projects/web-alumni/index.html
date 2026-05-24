@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Connect | SMA Negeri 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50">
+
+    <nav class="navbar">
+        <div class="logo">ALUMNI<span>SMA</span></div>
+        <div class="nav-links">
+            <button onclick="showHome()" class="nav-btn" id="btn-home">Beranda</button>
+            <button onclick="changePage('Database', this)" class="nav-btn">Alumni</button>
+            <button onclick="changePage('Loker', this)" class="nav-btn">Karir</button>
+            <button onclick="changePage('Berita', this)" class="nav-btn">Berita</button>
+            <button onclick="changePage('Etalase', this)" class="nav-btn">Etalase</button>
+        </div>
+        <button class="btn-register">Daftar</button>
+    </nav>
+
+    <div id="landing-page">
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Selamat Datang Kembali, <span class="text-blue-400">Alumni!</span></h1>
+                <p>Tempat bernostalgia, mencari kabar teman lama, dan membangun jaringan profesional.</p>
+                <div class="hero-btns">
+                    <button onclick="changePage('Database')" class="btn-main">Cari Teman Sekarang</button>
+                    <button onclick="changePage('Loker')" class="btn-sub">Lihat Lowongan Kerja</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="py-16 max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-end mb-8">
+                <h2 class="text-2xl font-bold">Kabar Terbaru</h2>
+                <button onclick="changePage('Berita')" class="text-blue-600 font-semibold text-sm">Lihat Semua &rarr;</button>
+            </div>
+            <div id="news-highlight" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="col-span-full text-center py-10">
+                    <div class="loader mx-auto"></div>
+                    <p class="text-gray-400 mt-2 text-sm">Menyinkronkan berita...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <main id="data-page" class="hidden py-12 max-w-6xl mx-auto px-4">
+        <h2 id="page-title" class="text-3xl font-bold text-center mb-10 text-gray-900"></h2>
+        <div id="main-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+    </main>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div>
+            <div class="footer-logo">ALUMNI<span>SMA</span></div>
+            <p class="footer-text">Wadah resmi komunikasi dan networking alumni SMA Negeri 1. Menjalin silaturahmi dan membangun masa depan bersama.</p>
+        </div>
+
+        <div>
+            <h4 class="footer-heading">Navigasi</h4>
+            <ul class="footer-links">
+                <li><a href="#" onclick="showHome()">Beranda</a></li>
+                <li><a href="#" onclick="changePage('Database')">Direktori Alumni</a></li>
+                <li><a href="#" onclick="changePage('Loker')">Info Karir</a></li>
+                <li><a href="#" onclick="changePage('Berita')">Berita & Event</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h4 class="footer-heading">Bantuan</h4>
+            <ul class="footer-links">
+                <li><a href="#">Cara Mendaftar</a></li>
+                <li><a href="#">Kebijakan Privasi</a></li>
+                <li><a href="#">Kontak Admin</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 Ikatan Alumni SMA Negeri 1. Dikelola oleh Tim IT Alumni. Terhubung dan Berbagi.</p>
+    </div>
+</footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
