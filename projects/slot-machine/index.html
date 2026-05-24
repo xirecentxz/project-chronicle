@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J-Event Slot v.0.7 - Realistic Spin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .container {
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 90%; max-width: 400px; text-align: center;
+        }
+        .version-tag { font-size: 0.7rem; color: #888; float: right; cursor: pointer; padding: 5px; }
+        
+        /* Judul */
+        .title-area { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .title-icon { width: 30px; height: 30px; }
+        h1 { color: #0984e3; margin: 10px 0; font-size: 1.5rem; }
+
+        /* Slot Machine Area */
+        .slot-machine {
+            display: flex; justify-content: center; gap: 10px;
+            background: #2d3436; padding: 20px; border-radius: 15px; border: 5px solid #74b9ff; margin-bottom: 20px;
+        }
+
+        /* Container tiap kolom slot */
+        .slot-window {
+            width: 80px; height: 100px; background: white; border-radius: 10px;
+            position: relative; overflow: hidden; /* Menyembunyikan ikon di luar jendela */
+        }
+
+        /* Reel yang berputar */
+        .slot-reel {
+            display: flex; flex-direction: column; align-items: center;
+            position: absolute; width: 100%; top: 0; transition: top 2s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+        }
+
+        .slot-reel img {
+            width: 60px; height: 60px; padding: 20px 0; /* Memberi jarak antar ikon */
+            flex-shrink: 0;
+        }
+
+        /* Animasi berputar cepat */
+        .spinning {
+            animation: roll-continuous 0.15s linear infinite;
+        }
+
+        @keyframes roll-continuous {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-300px); } /* Sesuaikan dengan tinggi ikon */
+        }
+
+        /* Tombol */
+        button {
+            width: 100%; padding: 16px; font-size: 1.2rem; font-weight: bold;
+            border: none; border-radius: 50px; cursor: pointer; transition: 0.3s;
+        }
+        #spin-btn { background: #0984e3; color: white; box-shadow: 0 6px 0 #0652dd; }
+        #spin-btn:disabled { background: #b2bec3; box-shadow: none; }
+
+        /* Hasil */
+        #result-section { 
+            margin-top: 20px; padding: 15px; border-radius: 15px; 
+            background: #e1f5fe; border: 2px solid #81d4fa; display: none; 
+        }
+        .prize-text { font-size: 1.3rem; font-weight: 800; color: #d63031; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .prize-icon { width: 25px; height: 25px; }
+        .staff-only { font-size: 0.65rem; color: #b2bec3; margin-top: 15px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <span class="version-tag" id="v-tag" onclick="checkStaffMode()">v.0.7</span>
+        <div class="title-area">
+            <img src="https://openmoji.org/data/color/svg/1F3A1.svg" class="title-icon">
+            <h1>J-Event Slot</h1>
+            <img src="https://openmoji.org/data/color/svg/1F3A1.svg" class="title-icon">
+        </div>
+        <p style="font-size: 0.8rem; color: #636e72;">Rasakan sensasi spin nyata!</p>
+
+        <div class="slot-machine">
+            <div class="slot-window"><div id="reel1" class="slot-reel"></div></div>
+            <div class="slot-window"><div id="reel2" class="slot-reel"></div></div>
+            <div class="slot-window"><div id="reel3" class="slot-reel"></div></div>
+        </div>
+
+        <button id="spin-btn" onclick="startSpin()">TARIK TUAS!</button>
+
+        <div id="result-section">
+            <div id="prize-display" class="prize-text"></div>
+            <p style="font-size: 0.8rem; color: #2d3436; margin-top: 10px;">Terima kasih sudah bermain!</p>
+            <div id="staff-info" class="staff-only">
+                <hr><p id="internal-time"></p>
+                <button style="background:none; color:gray; text-decoration:underline; width: auto; font-size: 0.7rem;" onclick="resetGame()">Reset (PIN)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ICONS = [
+            'https://openmoji.org/data/color/svg/1F338.svg', // Sakura
+            'https://openmoji.org/data/color/svg/26E9.svg',  // Torii
+            'https://openmoji.org/data/color/svg/1F363.svg', // Sushi
+            'https://openmoji.org/data/color/svg/1F43A.svg', // Wolf
+            'https://openmoji.org/data/color/svg/1F47B.svg', // Ghost
+            'https://openmoji.org/data/color/svg/1F3EE.svg'  // Lantern
+        ];
+
+        const PRIZE_ICONS = {
+            jackpot: 'https://openmoji.org/data/color/svg/1F3C6.svg',
+            win: 'https://openmoji.org/data/color/svg/2728.svg',
+            normal: 'https://openmoji.org/data/color/svg/1F338.svg'
+        };
+
+        const STORAGE_KEY = 'hogi_slot_prize';
+        const TIME_KEY = 'hogi_slot_time';
+        const COOLDOWN_MS = 24 * 60 * 60 * 1000;
+
+        let tapCount = 0;
+        const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
+        const spinBtn = document.getElementById('spin-btn');
+        const resultSection = document.getElementById('result-section');
+        const prizeDisplay = document.getElementById('prize-display');
+
+        // Isi reel dengan ikon saat awal
+        function initReels() {
+            reels.forEach(reel => {
+                let html = "";
+                // Kita buat deretan ikon panjang agar animasi berputar lancar
+                for(let i=0; i<20; i++) {
+                    html += `<img src="${ICONS[i % ICONS.length]}">`;
+                }
+                reel.innerHTML = html;
+            });
+        }
+
+        window.onload = () => {
+            initReels();
+            checkStatus();
+        };
+
+        function checkStatus() {
+            const lastPlay = localStorage.getItem(TIME_KEY);
+            const savedPrize = localStorage.getItem(STORAGE_KEY);
+            if (lastPlay && savedPrize) {
+                const elapsed = Date.now() - parseInt(lastPlay);
+                if (elapsed < COOLDOWN_MS) {
+                    prizeDisplay.innerHTML = savedPrize;
+                    resultSection.style.display = 'block';
+                    disableGame();
+                } else { localStorage.clear(); }
+            }
+        }
+
+        function startSpin() {
+            spinBtn.disabled = true;
+            
+            // Tambahkan class animasi berputar
+            reels.forEach((reel, index) => {
+                setTimeout(() => {
+                    reel.classList.add('spinning');
+                }, index * 200); // Delay antar kolom agar tidak barengan (lebih realistik)
+            });
+
+            // Setelah 2 detik, hentikan putaran
+            setTimeout(() => {
+                stopSpin();
+            }, 2500);
+        }
+
+        function stopSpin() {
+            const results = [];
+            reels.forEach((reel, index) => {
+                reel.classList.remove('spinning');
+                const finalIcon = ICONS[Math.floor(Math.random() * ICONS.length)];
+                results.push(finalIcon);
+                // Set hasil akhir tepat di jendela
+                reel.innerHTML = `<img src="${finalIcon}">`;
+            });
+
+            const unique = new Set(results).size;
+            let prizeHTML = (unique === 1) ? `POSTER! <img src="${PRIZE_ICONS.jackpot}" class="prize-icon">` : 
+                            (unique === 2) ? `GANCI! <img src="${PRIZE_ICONS.win}" class="prize-icon">` : 
+                            `STIKER! <img src="${PRIZE_ICONS.normal}" class="prize-icon">`;
+
+            localStorage.setItem(STORAGE_KEY, prizeHTML);
+            localStorage.setItem(TIME_KEY, Date.now().toString());
+            prizeDisplay.innerHTML = prizeHTML;
+            resultSection.style.display = 'block';
+            disableGame();
+        }
+
+        function disableGame() { 
+            spinBtn.disabled = true; spinBtn.innerText = "KESEMPATAN HABIS"; 
+        }
+
+        function checkStaffMode() {
+            tapCount++;
+            if (tapCount >= 3) { document.getElementById('staff-info').style.display = 'block'; tapCount = 0; }
+        }
+
+        function resetGame() {
+            if (prompt("PIN Petugas:") === "1234") { localStorage.clear(); location.reload(); }
+        }
+    </script>
+</body>
+</html>
