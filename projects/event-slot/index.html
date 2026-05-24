@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>J-Event Slot - Online Event System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+            background: linear-gradient(145deg, #0b2b44 0%, #1b4f72 100%);
+            margin: 0;
+            padding: 16px;
+            min-height: 100vh;
+        }
+
+        /* Mode Selection */
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+
+        .mode-btn.staff-mode {
+            background: #2c3e50;
+            color: #f1c40f;
+            box-shadow: 0 4px 0 #1a2632;
+        }
+
+        .mode-btn.player-mode {
+            background: #e67e22;
+            color: white;
+            box-shadow: 0 4px 0 #a04000;
+        }
+
+        .mode-btn.active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1a2632;
+        }
+
+        /* Staff Panel */
+        .staff-container, .player-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 48px;
+            padding: 20px;
+            box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.4);
+        }
+
+        .staff-panel {
+            background: #2c3e50;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .staff-title {
+            color: #f1c40f;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .code-display-area {
+            background: #34495e;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .code-label {
+            color: #bdc3c7;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .big-code {
+            font-family: 'Courier New', monospace;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #f1c40f;
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 20px;
+            letter-spacing: 8px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+
+        .btn-generate {
+            background: #f39c12;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 5px;
+            transition: 0.1s;
+        }
+
+        .btn-generate:active {
+            transform: scale(0.96);
+        }
+
+        .btn-copy {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .player-list {
+            background: #34495e;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            background: #2c3e50;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-size: 0.85rem;
+        }
+
+        .player-code {
+            font-family: monospace;
+            font-weight: bold;
+            color: #f1c40f;
+            font-size: 1.1rem;
+        }
+
+        .player-status {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+
+        .status-used {
+            background: #e74c3c;
+        }
+
+        .status-active {
+            background: #27ae60;
+        }
+
+        .status-expired {
+            background: #95a5a6;
+        }
+
+        /* Player Mode (untuk device player) */
+        .player-panel {
+            background: #fef9e6;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .player-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .code-input-area {
+            margin-bottom: 20px;
+        }
+
+        .player-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 2rem;
+            text-align: center;
+            font-family: monospace;
+            letter-spacing: 8px;
+            border: 3px solid #f1c40f;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            background: #1e272e;
+            padding: 20px 10px;
+            border-radius: 32px;
+            margin: 20px 0;
+        }
+
+        .slot-window {
+            width: 85px;
+            height: 110px;
+            background: #f5f6fa;
+            border-radius: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slot-reel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            transition: top 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .slot-reel img {
+            width: 70px;
+            height: 70px;
+            padding: 12px 0;
+        }
+
+        .spinning {
+            animation: quickSpin 0.08s linear infinite;
+        }
+
+        @keyframes quickSpin {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-280px); }
+        }
+
+        #spin-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: radial-gradient(circle at 30% 10%, #e67e22, #d35400);
+            border: none;
+            border-radius: 60px;
+            color: white;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 8px 0 #a04000;
+        }
+
+        #spin-btn:active {
+            transform: translateY(3px);
+        }
+
+        #spin-btn:disabled {
+            background: #95a5a6;
+            box-shadow: 0 5px 0 #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        .result-section {
+            background: #e8f0fe;
+            border-radius: 36px;
+            padding: 15px;
+            margin-top: 18px;
+            display: none;
+            text-align: center;
+        }
+
+        .prize-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #c0392b;
+        }
+
+        .prize-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .info-text {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 15px;
+            color: #7f8c8d;
+        }
+
+        .expiry-setting {
+            background: #ecf0f1;
+            border-radius: 16px;
+            padding: 12px;
+            margin: 15px 0;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mode-selector">
+    <button class="mode-btn staff-mode" id="staffModeBtn" onclick="switchMode('staff')">👑 STAFF DEVICE</button>
+    <button class="mode-btn player-mode" id="playerModeBtn" onclick="switchMode('player')">🎮 PLAYER DEVICE</button>
+</div>
+
+<!-- STAFF DEVICE VIEW -->
+<div id="staffView" style="display: none;">
+    <div class="staff-container">
+        <div class="staff-panel">
+            <div class="staff-title">👑 EVENT STAFF CONTROL CENTER</div>
+            
+            <div class="expiry-setting">
+                <label>⏰ Masa berlaku kode:</label>
+                <select id="expiryTimeSelect">
+                    <option value="5">5 menit</option>
+                    <option value="15">15 menit</option>
+                    <option value="30" selected>30 menit</option>
+                    <option value="60">1 jam</option>
+                    <option value="120">2 jam</option>
+                    <option value="360">6 jam</option>
+                </select>
+            </div>
+
+            <div class="code-display-area">
+                <div class="code-label">🎫 GENERATE KODE BARU</div>
+                <button class="btn-generate" onclick="generateNormalCode()">📦 KODE BIASA</button>
+                <button class="btn-generate" onclick="generateCheatCode()">⭐ KODE CHEAT (JACKPOT)</button>
+            </div>
+
+            <div class="code-display-area" id="currentCodeArea" style="display: none;">
+                <div class="code-label">🔑 KODE AKTIF SAAT INI</div>
+                <div class="big-code" id="activeCodeDisplay">-</div>
+                <button class="btn-copy" onclick="copyActiveCode()">📋 COPY KODE</button>
+                <div id="expiryCountdown" style="color: #f1c40f; margin-top: 10px; font-size: 0.8rem;"></div>
+            </div>
+
+            <div class="player-list">
+                <div style="color: #f1c40f; margin-bottom: 10px; font-weight: bold;">📋 RIWAYAT KODE YANG DIBERIKAN</div>
+                <div id="playerList"></div>
+            </div>
+
+            <div class="info-text">
+                💡 <strong>Cara Pakai:</strong><br>
+                1. Generate kode (biasa atau cheat)<br>
+                2. Klik COPY KODE<br>
+                3. Kirim kode ke player via chat<br>
+                4. Player masukkan kode di DEVICE mereka<br>
+                5. Lihat status di sini (sudah dipakai/belum)
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PLAYER DEVICE VIEW -->
+<div id="playerView" style="display: none;">
+    <div class="player-container">
+        <div class="player-panel">
+            <div class="player-title">🎮 J-Event Slot</div>
+            
+            <div class="code-input-area">
+                <input type="text" id="playerCodeInput" class="player-input" maxlength="6" placeholder="000000" autocomplete="off" inputmode="numeric">
+                <button class="btn-submit" onclick="submitPlayerCode()">🔓 AKTIFKAN KODE</button>
+                <div id="playerCodeStatus" style="font-size: 0.8rem; text-align: center; margin-top: 10px; color: #e67e22;"></div>
+            </div>
+
+            <div class="slot-machine">
+                <div class="slot-window"><div id="reel1" class="slot-reel"></div></div>
+                <div class="slot-window"><div id="reel2" class="slot-reel"></div></div>
+                <div class="slot-window"><div id="reel3" class="slot-reel"></div></div>
+            </div>
+
+            <button id="spin-btn" disabled>🔒 Masukkan Kode Dulu</button>
+
+            <div id="resultSection" class="result-section">
+                <div id="prizeDisplay" class="prize-text"></div>
+                <div id="resultMessage"></div>
+            </div>
+
+            <div class="info-text">
+                💡 Dapatkan kode 6 digit dari staff event!<br>
+                Masukkan kode, lalu tarik tuas untuk bermain!
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================== KONFIGURASI ========================
+    const ICONS = [
+        'https://openmoji.org/data/color/svg/1F338.svg',
+        'https://openmoji.org/data/color/svg/26E9.svg',
+        'https://openmoji.org/data/color/svg/1F363.svg',
+        'https://openmoji.org/data/color/svg/1F43A.svg',
+        'https://openmoji.org/data/color/svg/1F47B.svg',
+        'https://openmoji.org/data/color/svg/1F3EE.svg'
+    ];
+
+    // Storage Keys (Shared via localStorage - bisa diakses semua device di browser yang sama)
+    // Untuk event online beda device, gunakan fitur SHARE CODE MANUAL via chat
+    const STORAGE_ACTIVE_CODE = 'event_active_code';
+    const STORAGE_USED_CODES = 'event_used_codes';
+    const STORAGE_CODE_HISTORY = 'event_code_history';
+
+    // State
+    let activeCode = null; // { code, isCheat, expiryTime, used }
+    let usedCodes = new Set();
+    let codeHistory = []; // Array of { code, isCheat, generatedAt, usedAt, status }
+    let countdownInterval = null;
+    
+    // Player State
+    let isCodeActivated = false;
+    let hasCheatActive = false;
+    let isSpinning = false;
+    let playerActivatedCode = null;
+
+    // DOM Elements
+    const staffView = document.getElementById('staffView');
+    const playerView = document.getElementById('playerView');
+    const staffModeBtn = document.getElementById('staffModeBtn');
+    const playerModeBtn = document.getElementById('playerModeBtn');
+    const activeCodeDisplay = document.getElementById('activeCodeDisplay');
+    const expiryCountdownSpan = document.getElementById('expiryCountdown');
+    const playerListDiv = document.getElementById('playerList');
+    const currentCodeArea = document.getElementById('currentCodeArea');
+
+    // Player Elements
+    const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
+    const spinBtn = document.getElementById('spin-btn');
+    const resultSection = document.getElementById('resultSection');
+    const prizeDisplay = document.getElementById('prizeDisplay');
+    const playerCodeInput = document.getElementById('playerCodeInput');
+    const playerCodeStatus = document.getElementById('playerCodeStatus');
+
+    // ======================== FUNGSI KODE ========================
+    function generateSixDigitCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    function getExpiryMinutes() {
+        return parseInt(document.getElementById('expiryTimeSelect')?.value || 30);
+    }
+
+    function saveToStorage() {
+        const data = {
+            activeCode: activeCode,
+            usedCodes: Array.from(usedCodes),
+            codeHistory: codeHistory
+        };
+        localStorage.setItem(STORAGE_ACTIVE_CODE, JSON.stringify(data.activeCode));
+        localStorage.setItem(STORAGE_USED_CODES, JSON.stringify(data.usedCodes));
+        localStorage.setItem(STORAGE_CODE_HISTORY, JSON.stringify(data.codeHistory));
+    }
+
+    function loadFromStorage() {
+        const savedActive = localStorage.getItem(STORAGE_ACTIVE_CODE);
+        const savedUsed = localStorage.getItem(STORAGE_USED_CODES);
+        const savedHistory = localStorage.getItem(STORAGE_CODE_HISTORY);
+        
+        if (savedActive && savedActive !== 'null') {
+            try {
+                const parsed = JSON.parse(savedActive);
+                if (parsed.expiryTime > Date.now() && !parsed.used) {
+                    activeCode = parsed;
+                    currentCodeArea.style.display = 'block';
+                    activeCodeDisplay.innerText = activeCode.code;
+                    startCountdown();
+                } else {
+                    localStorage.removeItem(STORAGE_ACTIVE_CODE);
+                }
+            } catch(e) {}
+        }
+        
+        if (savedUsed) {
+            try {
+                const arr = JSON.parse(savedUsed);
+                usedCodes = new Set(arr);
+            } catch(e) {}
+        }
+        
+        if (savedHistory) {
+            try {
+                codeHistory = JSON.parse(savedHistory);
+                renderPlayerList();
+            } catch(e) {}
+        }
+    }
+
+    function generateNormalCode() {
+        let newCode;
+        do {
+            newCode = generateSixDigitCode();
+        } while (usedCodes.has(newCode));
+        
+        const expiryMinutes = getExpiryMinutes();
+        const expiryTimestamp = Date.now() + (expiryMinutes * 60 * 1000);
+        
+        activeCode = {
+            code: newCode,
+            isCheat: false,
+            expiryTime: expiryTimestamp,
+            used: false,
+            generatedAt: Date.now()
+        };
+        
+        // Tambah ke history
+        codeHistory.unshift({
+            code: newCode,
+            isCheat: false,
+            generatedAt: Date.now(),
+            status: 'active',
+            expiryMinutes: expiryMinutes
+        });
+        
+        // Simpan hanya 20 history terakhir
+        if (codeHistory.length > 20) codeHistory.pop();
+        
+        currentCodeArea.style.display = 'block';
+        activeCodeDisplay.innerText = activeCode.code;
+        saveToStorage();
+        startCountdown();
+        renderPlayerList();
+        showStaffMessage(`✅ Kode BIASA: ${newCode} (berlaku ${expiryMinutes} menit)`);
+    }
+
+    function generateCheatCode() {
+        let newCode;
+        do {
+            newCode = generateSixDigitCode();
+        } while (usedCodes.has(newCode));
+        
+        const expiryMinutes = getExpiryMinutes();
+        const expiryTimestamp = Date.now() + (expiryMinutes * 60 * 1000);
+        
+        activeCode = {
+            code: newCode,
+            isCheat: true,
+            expiryTime: expiryTimestamp,
+            used: false,
+            generatedAt: Date.now()
+        };
+        
+        codeHistory.unshift({
+            code: newCode,
+            isCheat: true,
+            generatedAt: Date.now(),
+            status: 'active',
+            expiryMinutes: expiryMinutes
+        });
+        
+        if (codeHistory.length > 20) codeHistory.pop();
+        
+        currentCodeArea.style.display = 'block';
+        activeCodeDisplay.innerText = activeCode.code;
+        saveToStorage();
+        startCountdown();
+        renderPlayerList();
+        showStaffMessage(`⭐ KODE CHEAT JACKPOT: ${newCode} (berlaku ${expiryMinutes} menit) ⭐`);
+    }
+
+    function copyActiveCode() {
+        if (activeCode) {
+            navigator.clipboard.writeText(activeCode.code);
+            showStaffMessage(`📋 Kode ${activeCode.code} sudah dicopy! Kirim ke player.`);
+        }
+    }
+
+    function startCountdown() {
+        if (countdownInterval) clearInterval(countdownInterval);
+        
+        countdownInterval = setInterval(() => {
+            if (!activeCode || activeCode.used) {
+                if (countdownInterval) clearInterval(countdownInterval);
+                return;
+            }
+            
+            const now = Date.now();
+            const timeLeft = activeCode.expiryTime - now;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                activeCode.used = true;
+                // Update history
+                const historyItem = codeHistory.find(h => h.code === activeCode.code);
+                if (historyItem) historyItem.status = 'expired';
+                activeCode = null;
+                currentCodeArea.style.display = 'none';
+                saveToStorage();
+                renderPlayerList();
+                showStaffMessage(`⚠️ Kode sudah kadaluarsa! Generate kode baru.`);
+            } else {
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                expiryCountdownSpan.innerHTML = `⏱️ Berlaku: ${minutes}m ${seconds}s lagi`;
+            }
+        }, 1000);
+    }
+
+    function renderPlayerList() {
+        if (!playerListDiv) return;
+        
+        if (codeHistory.length === 0) {
+            playerListDiv.innerHTML = '<div style="color:#95a5a6; text-align:center;">Belum ada kode yang digenerate</div>';
+            return;
+        }
+        
+        let html = '';
+        for (let item of codeHistory) {
+            const statusText = item.status === 'used' ? '✓ SUDAH DIPAKAI' : (item.status === 'expired' ? '⏰ EXPIRED' : '🟢 AKTIF');
+            const statusClass = item.status === 'used' ? 'status-used' : (item.status === 'expired' ? 'status-expired' : 'status-active');
+            const typeIcon = item.isCheat ? '⭐' : '📦';
+            
+            html += `
+                <div class="player-item">
+                    <div>
+                        <span class="player-code">${item.code}</span>
+                        <span style="margin-left: 8px;">${typeIcon}</span>
+                    </div>
+                    <span class="player-status ${statusClass}">${statusText}</span>
+                </div>
+            `;
+        }
+        playerListDiv.innerHTML = html;
+    }
+
+    function markCodeAsUsed(code) {
+        if (activeCode && activeCode.code === code) {
+            activeCode.used = true;
+            activeCode = null;
+            currentCodeArea.style.display = 'none';
+            if (countdownInterval) clearInterval(countdownInterval);
+        }
+        
+        const historyItem = codeHistory.find(h => h.code === code);
+        if (historyItem) {
+            historyItem.status = 'used';
+            historyItem.usedAt = Date.now();
+        }
+        
+        usedCodes.add(code);
+        saveToStorage();
+        renderPlayerList();
+    }
+
+    function showStaffMessage(msg) {
+        const div = document.createElement('div');
+        div.style.position = 'fixed';
+        div.style.bottom = '20px';
+        div.style.left = '50%';
+        div.style.transform = 'translateX(-50%)';
+        div.style.background = '#2c3e50';
+        div.style.color = '#f1c40f';
+        div.style.padding = '10px 20px';
+        div.style.borderRadius = '40px';
+        div.style.fontSize = '0.8rem';
+        div.style.zIndex = '999';
+        div.innerText = msg;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 2500);
+    }
+
+    // ======================== PLAYER SIDE ========================
+    function initReels() {
+        reels.forEach(reel => {
+            let html = "";
+            for(let i=0; i<24; i++) {
+                html += `<img src="${ICONS[i % ICONS.length]}">`;
+            }
+            reel.innerHTML = html;
+            reel.style.top = "0px";
+            reel.classList.remove('spinning');
+        });
+    }
+
+    function submitPlayerCode() {
+        const enteredCode = playerCodeInput.value.trim();
+        
+        if (!enteredCode || !/^\d{6}$/.test(enteredCode)) {
+            playerCodeStatus.innerText = "❌ Masukkan 6 digit angka!";
+            return;
+        }
+        
+        // Cek dari localStorage staff (shared storage)
+        const savedActive = localStorage.getItem(STORAGE_ACTIVE_CODE);
+        if (!savedActive) {
+            playerCodeStatus.innerText = "❌ Tidak ada kode aktif! Hubungi staff untuk kode baru.";
+            return;
+        }
+        
+        let activeCodeData;
+        try {
+            activeCodeData = JSON.parse(savedActive);
+        } catch(e) {
+            playerCodeStatus.innerText = "❌ Error! Hubungi staff.";
+            return;
+        }
+        
+        if (!activeCodeData || activeCodeData.used) {
+            playerCodeStatus.innerText = "❌ Kode sudah tidak berlaku! Minta kode baru ke staff.";
+            return;
+        }
+        
+        if (Date.now() > activeCodeData.expiryTime) {
+            playerCodeStatus.innerText = "❌ Kode sudah kadaluarsa! Minta kode baru.";
+            return;
+        }
+        
+        if (enteredCode !== activeCodeData.code) {
+            playerCodeStatus.innerText = "❌ Kode salah! Cek kembali 6 digit kode Anda.";
+            return;
+        }
+        
+        if (usedCodes.has(enteredCode)) {
+            playerCodeStatus.innerText = "❌ Kode sudah pernah digunakan!";
+            return;
+        }
+        
+        // KODE VALID!
+        isCodeActivated = true;
+        hasCheatActive = activeCodeData.isCheat;
+        playerActivatedCode = enteredCode;
+        
+        // Mark code as used di storage staff
+        markCodeAsUsed(enteredCode);
+        
+        spinBtn.disabled = false;
+        spinBtn.innerText = "🎰 TARIK TUAS!";
+        playerCodeInput.disabled = true;
+        
+        const cheatMsg = hasCheatActive ? "🔥🔥 KODE JACKPOT! HADIAH UTAMA DIJAMIN! 🔥🔥" : "✅ Kode valid! Selamat bermain!";
+        playerCodeStatus.innerText = cheatMsg;
+        playerCodeStatus.style.color = hasCheatActive ? "#d63031" : "#27ae60";
+        
+        resultSection.style.display = 'none';
+    }
+
+    function startSpin() {
+        if (!isCodeActivated) {
+            playerCodeStatus.innerText = "⚠️ Masukkan kode terlebih dahulu!";
+            return;
+        }
+        if (isSpinning) return;
+        
+        isSpinning = true;
+        spinBtn.disabled = true;
+        resultSection.style.display = 'none';
+        
+        // Animasi spin
+        reels.forEach((reel, idx) => {
+            let longContent = "";
+            for(let i=0; i<30; i++) {
+                longContent += `<img src="${ICONS[i % ICONS.length]}">`;
+            }
+            reel.innerHTML = longContent;
+            reel.style.top = "0px";
+            setTimeout(() => {
+                reel.classList.add('spinning');
+            }, idx * 150);
+        });
+        
+        let finalIcons = [];
+        
+        if (hasCheatActive) {
+            const jackpotIcon = ICONS[Math.floor(Math.random() * ICONS.length)];
+            finalIcons = [jackpotIcon, jackpotIcon, jackpotIcon];
+        } else {
+            for(let i=0; i<3; i++) {
+                finalIcons.push(ICONS[Math.floor(Math.random() * ICONS.length)]);
+            }
+        }
+        
+        setTimeout(() => {
+            reels.forEach((reel, idx) => {
+                reel.classList.remove('spinning');
+                reel.innerHTML = `<img src="${finalIcons[idx]}" style="width:70px;height:70px;padding:20px 0;">`;
+                reel.style.top = "0px";
+            });
+            
+            const uniqueCount = new Set(finalIcons).size;
+            let prizeHTML = "";
+            
+            if (uniqueCount === 1) {
+                prizeHTML = `🏆 JACKPOT POSTER! 🏆 <img src="https://openmoji.org/data/color/svg/1F3C6.svg" class="prize-icon">`;
+                if (hasCheatActive) prizeHTML = "💎✨ CHEAT ACTIVATED! JACKPOT! ✨💎<br>" + prizeHTML;
+            } else if (uniqueCount === 2) {
+                prizeHTML = `🎁 HADIAH GANCI! 🎁 <img src="https://openmoji.org/data/color/svg/2728.svg" class="prize-icon">`;
+            } else {
+                prizeHTML = `📌 STIKER EKSKLUSIF 📌 <img src="https://openmoji.org/data/color/svg/1F338.svg" class="prize-icon">`;
+            }
+            
+            prizeDisplay.innerHTML = prizeHTML;
+            document.getElementById('resultMessage').innerHTML = hasCheatActive ? 
+                "<span style='color:#d63031;font-weight:bold'>🎉 SELAMAT! ANDA MENDAPATKAN JACKPOT! 🎉</span>" : 
+                "Terima kasih sudah bermain!";
+            resultSection.style.display = 'block';
+            
+            // Reset
+            isCodeActivated = false;
+            hasCheatActive = false;
+            spinBtn.disabled = true;
+            spinBtn.innerText = "🔒 Permainan Selesai";
+            playerCodeInput.disabled = false;
+            playerCodeInput.value = "";
+            playerCodeStatus.innerText = "✅ Permainan selesai! Minta kode baru ke staff untuk bermain lagi.";
+            
+            isSpinning = false;
+        }, 2400);
+    }
+
+    // ======================== MODE SWITCH ========================
+    function switchMode(mode) {
+        if (mode === 'staff') {
+            staffView.style.display = 'block';
+            playerView.style.display = 'none';
+            staffModeBtn.classList.add('active');
+            playerModeBtn.classList.remove('active');
+            loadFromStorage();
+            if (activeCode) {
+                currentCodeArea.style.display = 'block';
+                activeCodeDisplay.innerText = activeCode.code;
+                startCountdown();
+            }
+            renderPlayerList();
+        } else {
+            staffView.style.display = 'none';
+            playerView.style.display = 'block';
+            staffModeBtn.classList.remove('active');
+            playerModeBtn.classList.add('active');
+            initReels();
+            spinBtn.disabled = true;
+            spinBtn.innerText = "🔒 Masukkan Kode Dulu";
+            playerCodeInput.disabled = false;
+            playerCodeInput.value = "";
+            resultSection.style.display = 'none';
+        }
+    }
+
+    // Limit input to numbers only
+    if (playerCodeInput) {
+        playerCodeInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0,6);
+        });
+    }
+
+    // Auto detect mode based on localStorage (opsional)
+    window.onload = () => {
+        switchMode('staff');
+    };
+</script>
+</body>
+</html>
