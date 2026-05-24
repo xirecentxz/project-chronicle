@@ -1,389 +1,18 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>xirecentxz / project-chronicle</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-/* ── Reset & Base ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #0A0C10;
-  --bg2: #111318;
-  --card: #141720;
-  --card2: #1a1f2b;
-  --border: #252c3b;
-  --border2: #2e3748;
-  --amber: #F59E0B;
-  --amber2: #FCD34D;
-  --cyan: #06B6D4;
-  --text: #EEF2FF;
-  --text2: #8892A4;
-  --text3: #5a6478;
-  --green: #10B981;
-  --purple: #8B5CF6;
-  --red: #EF4444;
-  --blue: #3B82F6;
-  --orange: #F97316;
-  --pink: #EC4899;
-  --radius: 10px;
-  --font-mono: 'Space Mono', monospace;
-  --font-display: 'Syne', sans-serif;
-}
-[data-theme="light"] {
-  --bg: #F5F3EE;
-  --bg2: #FFFDF7;
-  --card: #FFFFFF;
-  --card2: #F9F7F1;
-  --border: #E0D9C8;
-  --border2: #CFC7B0;
-  --text: #1A1610;
-  --text2: #5C5446;
-  --text3: #9C8E78;
-  --amber: #D97706;
-  --amber2: #B45309;
-  --cyan: #0891B2;
-}
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
-
-/* ── Skip link ── */
-.skip-link {
-  position: absolute; top: -99px; left: 16px;
-  background: var(--amber); color: #000; padding: 8px 16px;
-  border-radius: var(--radius); font-family: var(--font-mono); font-size: 13px;
-  z-index: 1000; text-decoration: none; transition: top .2s;
-}
-.skip-link:focus { top: 12px; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-mono);
-  min-height: 100vh;
-  position: relative;
-  transition: background .3s, color .3s;
-  overflow-x: hidden;
-}
-
-/* grid bg */
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 44px 44px;
-  opacity: .2;
-  transition: opacity .3s;
-}
-[data-theme="light"] body::before { opacity: .5; }
-
-/* ── Layout ── */
-.wrapper { position: relative; z-index: 1; max-width: 1340px; margin: 0 auto; padding: 0 24px; }
-
-/* ── HEADER ── */
-header {
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-  position: sticky; top: 0; z-index: 100;
-  backdrop-filter: blur(12px);
-  background: color-mix(in srgb, var(--bg) 90%, transparent);
-}
-.header-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 0; gap: 16px; flex-wrap: wrap;
-}
-.logo-group { display: flex; flex-direction: column; gap: 2px; }
-.logo {
-  font-family: var(--font-display); font-size: clamp(15px, 2vw, 18px);
-  font-weight: 700; color: var(--text); letter-spacing: -.3px;
-  text-decoration: none; display: flex; align-items: center; gap: 8px;
-}
-.logo-slash { color: var(--amber); }
-.logo-repo { color: var(--amber); }
-.logo-icon {
-  width: 28px; height: 28px; border: 1.5px solid var(--amber);
-  border-radius: 6px; display: inline-flex; align-items: center; justify-content: center;
-  font-size: 14px; flex-shrink: 0;
-}
-.tagline { font-size: 11px; color: var(--text2); font-style: italic; }
-.header-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.badge-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.badge {
-  font-size: 10px; padding: 3px 8px; border-radius: 99px;
-  border: 1px solid var(--border2); color: var(--text2);
-  font-family: var(--font-mono); white-space: nowrap;
-}
-.badge.amber { border-color: var(--amber); color: var(--amber); background: color-mix(in srgb, var(--amber) 8%, transparent); }
-.badge.cyan { border-color: var(--cyan); color: var(--cyan); background: color-mix(in srgb, var(--cyan) 8%, transparent); }
-.header-meta { font-size: 10px; color: var(--text3); text-align: right; display: flex; flex-direction: column; gap: 2px; }
-#live-time { color: var(--text2); }
-
-/* theme toggle */
-.theme-toggle {
-  background: var(--card); border: 1px solid var(--border2);
-  color: var(--text2); cursor: pointer; width: 34px; height: 34px;
-  border-radius: 8px; font-size: 15px; display: flex; align-items: center; justify-content: center;
-  transition: all .2s; flex-shrink: 0;
-}
-.theme-toggle:hover { border-color: var(--amber); color: var(--amber); }
-.theme-toggle:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-
-/* ── HERO ── */
-.hero { padding: 56px 0 40px; }
-.hero-eyebrow {
-  font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
-  color: var(--amber); margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
-}
-.hero-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--amber); }
-.hero-title {
-  font-family: var(--font-display); font-size: clamp(32px, 5vw, 64px);
-  font-weight: 800; line-height: 1.05; letter-spacing: -1.5px;
-  margin-bottom: 20px;
-}
-.hero-title .line2 { color: var(--amber); display: block; }
-.hero-desc { font-size: 14px; color: var(--text2); max-width: 560px; line-height: 1.8; margin-bottom: 32px; }
-
-/* counter strip */
-.stats-strip {
-  display: flex; gap: 1px; border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden;
-  width: fit-content; margin-bottom: 40px;
-}
-.stat-block {
-  background: var(--card); padding: 14px 24px; flex: 1;
-  display: flex; flex-direction: column; gap: 4px; min-width: 110px;
-  border-right: 1px solid var(--border);
-}
-.stat-block:last-child { border-right: none; }
-.stat-num {
-  font-family: var(--font-display); font-size: 28px; font-weight: 800;
-  color: var(--amber); line-height: 1;
-}
-.stat-label { font-size: 10px; color: var(--text3); letter-spacing: .5px; }
-
-/* ── CONTROLS ── */
-.controls-bar {
-  position: sticky; top: 60px; z-index: 90;
-  background: color-mix(in srgb, var(--bg) 95%, transparent);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 0;
-}
-.controls-inner { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.search-wrap {
-  position: relative; flex: 1; min-width: 200px; max-width: 360px;
-}
-.search-wrap svg {
-  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-  color: var(--text3); pointer-events: none; width: 15px; height: 15px;
-}
-#search-input {
-  width: 100%; background: var(--card); border: 1px solid var(--border2);
-  border-radius: 8px; color: var(--text); font-family: var(--font-mono);
-  font-size: 12px; padding: 9px 12px 9px 34px; outline: none;
-  transition: border-color .2s;
-}
-#search-input:focus { border-color: var(--amber); }
-#search-input::placeholder { color: var(--text3); }
-
-.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.filter-btn {
-  background: var(--card); border: 1px solid var(--border);
-  color: var(--text2); font-family: var(--font-mono); font-size: 11px;
-  padding: 7px 14px; border-radius: 6px; cursor: pointer;
-  transition: all .18s; white-space: nowrap;
-}
-.filter-btn:hover { border-color: var(--amber); color: var(--amber); }
-.filter-btn.active { background: var(--amber); border-color: var(--amber); color: #000; font-weight: 700; }
-.filter-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-
-.sort-select {
-  background: var(--card); border: 1px solid var(--border);
-  color: var(--text2); font-family: var(--font-mono); font-size: 11px;
-  padding: 7px 12px; border-radius: 6px; cursor: pointer; outline: none;
-  transition: border-color .2s;
-}
-.sort-select:focus { border-color: var(--amber); }
-
-/* ── MAIN GRID ── */
-main { padding: 40px 0 80px; }
-.result-count { font-size: 11px; color: var(--text3); margin-bottom: 28px; }
-.result-count span { color: var(--amber); }
-
-/* category section */
-.category-section { margin-bottom: 56px; }
-.category-header {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 24px; padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.cat-icon { font-size: 20px; }
-.cat-name {
-  font-family: var(--font-display); font-size: 18px; font-weight: 700;
-  letter-spacing: -.3px;
-}
-.cat-count {
-  font-size: 11px; color: var(--text3); background: var(--card2);
-  border: 1px solid var(--border); padding: 2px 8px; border-radius: 99px;
-}
-.cat-line { flex: 1; height: 1px; background: var(--border); }
-
-/* project grid */
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-}
-@media (max-width: 1100px) { .project-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 768px)  { .project-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px)  { .project-grid { grid-template-columns: 1fr; } }
-
-/* project card */
-.project-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  display: flex; flex-direction: column; gap: 12px;
-  transition: transform .2s, border-color .2s, box-shadow .2s;
-  position: relative; overflow: hidden;
-  animation: fadeUp .4s both;
-}
-.project-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0;
-  height: 2px; background: linear-gradient(90deg, var(--amber), var(--cyan));
-  transform: scaleX(0); transform-origin: left;
-  transition: transform .25s;
-}
-.project-card:hover { transform: translateY(-3px); border-color: var(--border2); box-shadow: 0 12px 32px color-mix(in srgb, var(--amber) 6%, transparent); }
-.project-card:hover::before { transform: scaleX(1); }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-
-.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-.project-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: -.2px; line-height: 1.2; }
-.card-links { display: flex; gap: 6px; flex-shrink: 0; }
-.card-link {
-  width: 28px; height: 28px; border: 1px solid var(--border2);
-  border-radius: 6px; display: flex; align-items: center; justify-content: center;
-  color: var(--text3); text-decoration: none; font-size: 12px;
-  transition: all .18s; background: var(--card2);
-}
-.card-link:hover { border-color: var(--amber); color: var(--amber); }
-.card-link:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-.card-link svg { width: 13px; height: 13px; }
-
-.project-desc { font-size: 11px; color: var(--text2); line-height: 1.6; flex: 1; }
-
-.tech-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; }
-.tech-badge {
-  font-size: 9.5px; padding: 2px 7px; border-radius: 99px;
-  border: 1px solid; font-family: var(--font-mono);
-  cursor: default; transition: opacity .15s;
-  position: relative;
-}
-.tech-badge:hover .tech-tooltip { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.tech-tooltip {
-  position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%) translateY(4px);
-  background: var(--card2); border: 1px solid var(--border2);
-  color: var(--text2); font-size: 10px; padding: 4px 8px; border-radius: 5px;
-  white-space: nowrap; opacity: 0; pointer-events: none;
-  transition: all .15s; z-index: 10;
-}
-.tech-tooltip::after {
-  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-  border: 4px solid transparent; border-top-color: var(--border2);
-}
-
-/* tech colors */
-.tech-html { color: #F97316; border-color: #F97316; background: color-mix(in srgb, #F97316 8%, transparent); }
-.tech-css  { color: #8B5CF6; border-color: #8B5CF6; background: color-mix(in srgb, #8B5CF6 8%, transparent); }
-.tech-js   { color: #EAB308; border-color: #EAB308; background: color-mix(in srgb, #EAB308 8%, transparent); }
-.tech-php  { color: #10B981; border-color: #10B981; background: color-mix(in srgb, #10B981 8%, transparent); }
-.tech-laravel { color: #EF4444; border-color: #EF4444; background: color-mix(in srgb, #EF4444 8%, transparent); }
-.tech-react { color: #06B6D4; border-color: #06B6D4; background: color-mix(in srgb, #06B6D4 8%, transparent); }
-.tech-mysql { color: #3B82F6; border-color: #3B82F6; background: color-mix(in srgb, #3B82F6 8%, transparent); }
-.tech-bootstrap { color: #A855F7; border-color: #A855F7; background: color-mix(in srgb, #A855F7 8%, transparent); }
-.tech-tailwind { color: #06B6D4; border-color: #06B6D4; background: color-mix(in srgb, #06B6D4 8%, transparent); }
-
-.card-date { font-size: 10px; color: var(--text3); }
-
-/* no results */
-.no-results {
-  text-align: center; padding: 80px 20px; color: var(--text3);
-  display: none; grid-column: 1 / -1;
-}
-.no-results.show { display: block; }
-.no-results p { font-size: 13px; margin-top: 12px; }
-
-/* ── DISCLAIMER ── */
-.disclaimer-section {
-  border: 1px solid var(--border); border-radius: var(--radius);
-  background: var(--card); padding: 24px 28px; margin-bottom: 48px;
-  border-left: 3px solid var(--amber);
-}
-.disclaimer-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-.disclaimer-body { font-size: 11px; color: var(--text2); line-height: 1.9; }
-
-/* ── FOOTER ── */
-footer {
-  border-top: 1px solid var(--border);
-  padding: 32px 0 24px;
-}
-.footer-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 16px;
-}
-.footer-left { font-size: 11px; color: var(--text3); }
-.footer-left strong { color: var(--amber); }
-.footer-links { display: flex; gap: 12px; }
-.footer-link {
-  font-size: 11px; color: var(--text2); text-decoration: none;
-  display: flex; align-items: center; gap: 5px;
-  transition: color .15s; padding: 4px;
-}
-.footer-link:hover { color: var(--amber); }
-.footer-link:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 3px; }
-.footer-link svg { width: 13px; height: 13px; }
-.footer-copy { font-size: 10px; color: var(--text3); }
-
-/* ── BACK TO TOP ── */
-#back-to-top {
-  position: fixed; bottom: 28px; right: 28px; z-index: 200;
-  width: 40px; height: 40px; border-radius: 8px;
-  background: var(--card); border: 1px solid var(--border2);
-  color: var(--text2); cursor: pointer; font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transform: translateY(8px);
-  transition: all .22s; box-shadow: 0 4px 16px rgba(0,0,0,.3);
-}
-#back-to-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-#back-to-top:hover { border-color: var(--amber); color: var(--amber); }
-#back-to-top:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-
-/* hidden categories */
-.category-section[data-hidden="true"] { display: none; }
-
-@media (max-width: 600px) {
-  .stats-strip { flex-wrap: wrap; }
-  .header-inner { gap: 10px; }
-  .controls-bar { top: 0; }
-  .hero { padding: 28px 0 24px; }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>xirecentxz / project-chronicle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <a href="#main" class="skip-link">Skip to content</a>
 
-<!-- HEADER -->
 <header>
   <div class="wrapper">
     <div class="header-inner">
@@ -410,7 +39,6 @@ footer {
   </div>
 </header>
 
-<!-- CONTROLS -->
 <div class="controls-bar" role="search" aria-label="Project search and filter">
   <div class="wrapper">
     <div class="controls-inner">
@@ -436,7 +64,6 @@ footer {
 </div>
 
 <div class="wrapper">
-  <!-- HERO -->
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-eyebrow">Developer's Chronicle</div>
     <h1 class="hero-title" id="hero-title">
@@ -468,11 +95,9 @@ footer {
     </div>
   </section>
 
-  <!-- MAIN -->
   <main id="main">
     <p class="result-count" aria-live="polite" aria-atomic="true">Menampilkan <span id="count-shown">0</span> dari <span id="count-total">0</span> proyek</p>
 
-    <!-- ORIGINAL IDEAS -->
     <section class="category-section" data-category="original" aria-labelledby="cat-original">
       <div class="category-header">
         <span class="cat-icon" aria-hidden="true">📁</span>
@@ -483,7 +108,6 @@ footer {
       <div class="project-grid" id="grid-original"></div>
     </section>
 
-    <!-- MINI GAMES -->
     <section class="category-section" data-category="games" aria-labelledby="cat-games">
       <div class="category-header">
         <span class="cat-icon" aria-hidden="true">🎮</span>
@@ -494,7 +118,6 @@ footer {
       <div class="project-grid" id="grid-games"></div>
     </section>
 
-    <!-- TRACING -->
     <section class="category-section" data-category="tracing" aria-labelledby="cat-tracing">
       <div class="category-header">
         <span class="cat-icon" aria-hidden="true">🏗️</span>
@@ -505,7 +128,6 @@ footer {
       <div class="project-grid" id="grid-tracing"></div>
     </section>
 
-    <!-- WEB APPS -->
     <section class="category-section" data-category="webapps" aria-labelledby="cat-webapps">
       <div class="category-header">
         <span class="cat-icon" aria-hidden="true">📱</span>
@@ -516,7 +138,6 @@ footer {
       <div class="project-grid" id="grid-webapps"></div>
     </section>
 
-    <!-- TUTORIAL -->
     <section class="category-section" data-category="tutorial" aria-labelledby="cat-tutorial">
       <div class="category-header">
         <span class="cat-icon" aria-hidden="true">📚</span>
@@ -527,7 +148,6 @@ footer {
       <div class="project-grid" id="grid-tutorial"></div>
     </section>
 
-    <!-- DISCLAIMER -->
     <aside class="disclaimer-section" aria-label="Tracing disclaimer">
       <div class="disclaimer-title">⚠️ Disclaimer — Proyek Tracing / Clone</div>
       <p class="disclaimer-body">
@@ -539,7 +159,6 @@ footer {
     </aside>
   </main>
 
-  <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
       <div class="footer-left">
@@ -562,225 +181,7 @@ footer {
 
 <button id="back-to-top" aria-label="Back to top" title="Kembali ke atas">↑</button>
 
-<script>
-// ── DATA ──────────────────────────────────────────────────────────────────
-const projects = [
-  // ORIGINAL
-  { id:1, name:"TechPulse", category:"original", description:"Portal review teknologi AI dan software terkini", tech:["HTML","CSS","JS"], demoUrl:"/techpulse/", githubUrl:"#", date:"2025-10-01" },
-  { id:2, name:"Personal Portfolio", category:"original", description:"Website portofolio personal dengan animasi smooth", tech:["HTML","CSS","JS"], demoUrl:"/portfolio/", githubUrl:"#", date:"2025-10-15" },
-  { id:3, name:"Company Profile", category:"original", description:"Landing page company profile fiktif modern", tech:["HTML","CSS","JS"], demoUrl:"/company-profile/", githubUrl:"#", date:"2025-11-01" },
-  { id:4, name:"Tech Blog", category:"original", description:"Template blog teknologi dengan dark mode bawaan", tech:["HTML","CSS","JS"], demoUrl:"/tech-blog/", githubUrl:"#", date:"2025-11-20" },
-  { id:5, name:"Dev Dashboard", category:"original", description:"Dashboard statistik developer dengan chart interaktif", tech:["HTML","CSS","JS"], demoUrl:"/dev-dashboard/", githubUrl:"#", date:"2025-12-01" },
-
-  // GAMES
-  { id:6, name:"Janken Game", category:"games", description:"Batu-gunting-kertas melawan AI dengan skor dinamis", tech:["HTML","CSS","JS"], demoUrl:"/janken-game/", date:"2025-09-15" },
-  { id:7, name:"Slot Machine", category:"games", description:"Mesin slot kasino mini dengan animasi gulungan", tech:["HTML","CSS","JS"], demoUrl:"/slot-machine/", date:"2025-09-28" },
-  { id:8, name:"Plinko", category:"games", description:"Simulasi Plinko Price is Right dengan physics dasar", tech:["HTML","CSS","JS"], demoUrl:"/plinko/", date:"2025-10-10" },
-  { id:9, name:"Roulette", category:"games", description:"Roulette kasino Eropa dengan taruhan virtual", tech:["HTML","CSS","JS"], demoUrl:"/roulette/", date:"2025-10-25" },
-  { id:10, name:"Memory Match", category:"games", description:"Card matching game dengan timer dan leaderboard lokal", tech:["HTML","CSS","JS"], demoUrl:"/memory-match/", date:"2025-11-05" },
-  { id:11, name:"Snake Classic", category:"games", description:"Remake game ular klasik di atas canvas HTML5", tech:["HTML","CSS","JS"], demoUrl:"/snake-game/", date:"2025-11-15" },
-
-  // TRACING
-  { id:12, name:"Stripe Clone", category:"tracing", description:"Landing page Stripe.com — tracing layout & gradien", tech:["HTML","CSS"], demoUrl:"/stripe-clone/", date:"2025-09-05" },
-  { id:13, name:"Tailwind UI Clone", category:"tracing", description:"Komponen UI dari Tailwind UI — latihan utility-first CSS", tech:["HTML","CSS","JS"], demoUrl:"/tailwindui-clone/", date:"2025-09-20" },
-  { id:14, name:"Linear Clone", category:"tracing", description:"Homepage Linear.app dengan animasi scroll reveal", tech:["HTML","CSS","JS"], demoUrl:"/linear-clone/", date:"2025-10-05" },
-  { id:15, name:"Vercel Clone", category:"tracing", description:"Tracing halaman dashboard Vercel — layout & dark theme", tech:["HTML","CSS","JS"], demoUrl:"/vercel-clone/", date:"2025-10-20" },
-
-  // WEB APPS
-  { id:16, name:"Mini CRM", category:"webapps", description:"Sistem CRM sederhana untuk kelola kontak & deal", tech:["HTML","CSS","JS","PHP","MySQL"], demoUrl:"/mini-crm/", githubUrl:"#", date:"2025-09-10" },
-  { id:17, name:"Helpdesk System", category:"webapps", description:"Sistem tiket helpdesk dengan status tracking", tech:["PHP","MySQL","Bootstrap"], demoUrl:"/helpdesk/", githubUrl:"#", date:"2025-09-25" },
-  { id:18, name:"Alumni Portal", category:"webapps", description:"Portal data alumni sekolah/kampus dengan CRUD lengkap", tech:["PHP","MySQL","Bootstrap"], demoUrl:"/alumni-portal/", githubUrl:"#", date:"2025-10-08" },
-  { id:19, name:"Expense Tracker", category:"webapps", description:"Pencatat keuangan harian dengan grafik pie chart", tech:["HTML","CSS","JS"], demoUrl:"/expense-tracker/", date:"2025-10-22" },
-  { id:20, name:"Task Board", category:"webapps", description:"Kanban board sederhana drag-and-drop tanpa library", tech:["HTML","CSS","JS"], demoUrl:"/task-board/", date:"2025-11-08" },
-
-  // TUTORIAL
-  { id:21, name:"Laravel Blog", category:"tutorial", description:"Blog CRUD mengikuti tutorial Laravel 10 Pemula", tech:["PHP","Laravel","MySQL"], demoUrl:"/laravel-blog/", githubUrl:"#", date:"2025-09-01" },
-  { id:22, name:"Laravel POS", category:"tutorial", description:"Point of Sale sederhana ikut tutorial Laravolt", tech:["PHP","Laravel","MySQL"], demoUrl:"/laravel-pos/", githubUrl:"#", date:"2025-09-18" },
-  { id:23, name:"CSS Flexbox Playground", category:"tutorial", description:"Visualisasi interaktif semua properti CSS Flexbox", tech:["HTML","CSS","JS"], demoUrl:"/flexbox-play/", date:"2025-10-03" },
-  { id:24, name:"Vanilla JS 30", category:"tutorial", description:"30 mini-project JavaScript murni (ikut JS30 Wesbos)", tech:["HTML","CSS","JS"], demoUrl:"/js30/", githubUrl:"#", date:"2025-10-18" },
-];
-
-const techDesc = {
-  HTML: "HyperText Markup Language — struktur halaman web",
-  CSS: "Cascading Style Sheets — styling & layout visual",
-  JS: "JavaScript — interaktivitas & logika di browser",
-  PHP: "Server-side scripting language",
-  Laravel: "PHP framework modern & elegan",
-  MySQL: "Relational database management system",
-  Bootstrap: "CSS framework responsif dari Twitter",
-  React: "Library UI dari Meta/Facebook",
-  Tailwind: "Utility-first CSS framework",
-};
-
-// ── THEME ───────────────────────────────────────────────────────────────
-const themeToggle = document.getElementById('theme-toggle');
-const root = document.documentElement;
-const savedTheme = localStorage.getItem('chronicle-theme') || 'dark';
-setTheme(savedTheme);
-
-function setTheme(t) {
-  root.setAttribute('data-theme', t);
-  themeToggle.textContent = t === 'dark' ? '🌙' : '☀️';
-  localStorage.setItem('chronicle-theme', t);
-}
-themeToggle.addEventListener('click', () => {
-  setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-});
-
-// ── CLOCK ───────────────────────────────────────────────────────────────
-function updateClock() {
-  const now = new Date();
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('live-time').textContent =
-    now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-  document.getElementById('live-date').textContent =
-    `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-}
-updateClock();
-setInterval(updateClock, 1000);
-
-// ── COUNTER ANIMATION ───────────────────────────────────────────────────
-function animateCounter(el, target, duration = 1000) {
-  const start = performance.now();
-  function tick(now) {
-    const p = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(ease * target);
-    if (p < 1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-
-// ── CARD BUILDER ────────────────────────────────────────────────────────
-function techClass(t) {
-  return 'tech-' + t.toLowerCase().replace(/[^a-z]/g,'');
-}
-
-function buildCard(p) {
-  const techBadges = p.tech.map(t => `
-    <span class="tech-badge ${techClass(t)}" tabindex="0" aria-label="${t}: ${techDesc[t] || t}">
-      ${t}
-      <span class="tech-tooltip" role="tooltip">${techDesc[t] || t}</span>
-    </span>`).join('');
-
-  const links = `
-    ${p.demoUrl ? `<a href="https://xirecentxz.github.io/xirecentxz-project-chronicle${p.demoUrl}" class="card-link" target="_blank" rel="noopener noreferrer" title="Live Demo" aria-label="Live demo: ${p.name}">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-    </a>` : ''}
-    ${p.githubUrl ? `<a href="${p.githubUrl}" class="card-link" target="_blank" rel="noopener noreferrer" title="Source Code" aria-label="Source code: ${p.name}">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-    </a>` : ''}`;
-
-  const d = new Date(p.date);
-  const dateStr = d.toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
-
-  return `
-    <article class="project-card" data-category="${p.category}" data-name="${p.name.toLowerCase()}" data-tech="${p.tech.join(' ').toLowerCase()}" data-date="${p.date}">
-      <div class="card-top">
-        <h3 class="project-name">${p.name}</h3>
-        <div class="card-links">${links}</div>
-      </div>
-      <p class="project-desc">${p.description}</p>
-      <div class="tech-list" aria-label="Teknologi yang digunakan">${techBadges}</div>
-      <div class="card-date">📅 ${dateStr}</div>
-    </article>`;
-}
-
-// ── RENDER ──────────────────────────────────────────────────────────────
-const categories = ['original','games','tracing','webapps','tutorial'];
-let currentFilter = 'all';
-let currentSort = 'newest';
-let currentSearch = '';
-
-function getSorted(arr) {
-  const copy = [...arr];
-  if (currentSort === 'newest') return copy.sort((a,b) => b.date.localeCompare(a.date));
-  if (currentSort === 'az') return copy.sort((a,b) => a.name.localeCompare(b.name));
-  if (currentSort === 'za') return copy.sort((a,b) => b.name.localeCompare(a.name));
-  return copy;
-}
-
-function render() {
-  const q = currentSearch.toLowerCase();
-  const filtered = getSorted(projects).filter(p => {
-    const matchCat = currentFilter === 'all' || p.category === currentFilter;
-    const matchQ = !q || p.name.toLowerCase().includes(q) || p.tech.join(' ').toLowerCase().includes(q) || p.description.toLowerCase().includes(q);
-    return matchCat && matchQ;
-  });
-
-  let shown = 0;
-  categories.forEach(cat => {
-    const grid = document.getElementById('grid-' + cat);
-    const section = grid.closest('.category-section');
-    const catItems = filtered.filter(p => p.category === cat);
-    grid.innerHTML = catItems.map(buildCard).join('') +
-      (catItems.length === 0 && (currentFilter === 'all' || currentFilter !== cat)
-        ? '' : '');
-    document.getElementById('cnt-' + cat).textContent = catItems.length;
-    // hide section if no items
-    section.setAttribute('data-hidden', catItems.length === 0 ? 'true' : 'false');
-    shown += catItems.length;
-  });
-
-  document.getElementById('count-shown').textContent = shown;
-  document.getElementById('count-total').textContent = projects.length;
-
-  // no results
-  const allGrids = document.querySelectorAll('.project-grid');
-  if (shown === 0) {
-    // show no results in first visible grid
-    const firstGrid = document.getElementById('grid-original');
-    firstGrid.innerHTML = `<div class="no-results show" role="status"><span style="font-size:32px">🔍</span><p>Tidak ada proyek yang cocok dengan pencarian "<strong>${currentSearch}</strong>"</p></div>`;
-    document.querySelector('[data-category="original"]').setAttribute('data-hidden','false');
-  }
-}
-
-// init
-render();
-const total = projects.length;
-animateCounter(document.getElementById('counter-total'), total);
-document.getElementById('project-badge').textContent = `🎯 ${total}+ Projects`;
-document.getElementById('footer-total').textContent = total;
-
-// ── SEARCH ──────────────────────────────────────────────────────────────
-document.getElementById('search-input').addEventListener('input', function() {
-  currentSearch = this.value.trim();
-  render();
-});
-
-// ── FILTER ──────────────────────────────────────────────────────────────
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    render();
-  });
-});
-
-// ── SORT ────────────────────────────────────────────────────────────────
-document.getElementById('sort-select').addEventListener('change', function() {
-  currentSort = this.value;
-  render();
-});
-
-// ── BACK TO TOP ─────────────────────────────────────────────────────────
-const btt = document.getElementById('back-to-top');
-window.addEventListener('scroll', () => {
-  btt.classList.toggle('show', window.scrollY > 300);
-});
-btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-// ── STAGGER ANIMATION ON RENDER ─────────────────────────────────────────
-// Give cards staggered delay when rendered
-function applyStagger() {
-  document.querySelectorAll('.project-card').forEach((card, i) => {
-    card.style.animationDelay = (i % 8) * 0.05 + 's';
-  });
-}
-const observer = new MutationObserver(applyStagger);
-document.querySelectorAll('.project-grid').forEach(g => observer.observe(g, { childList: true }));
-applyStagger();
-</script>
+<script src="js/data.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>
