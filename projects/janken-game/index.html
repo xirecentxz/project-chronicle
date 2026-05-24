@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JANKEN HERO TACTICS 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --p1-color: #00d2ff;
+            --p2-color: #ff0058;
+            --bg-dark: #0a0a0c;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg-dark);
+            color: white; height: 100vh; overflow: hidden;
+        }
+
+        /* --- OVERLAY SCREENS --- */
+        .screen {
+            position: fixed; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 1000;
+            background: radial-gradient(circle at center, #161625 0%, #0a0a0c 100%);
+            transition: 0.5s; text-align: center;
+        }
+        .screen.hidden { opacity: 0; pointer-events: none; transform: scale(1.1); }
+
+        .glass-card {
+            background: var(--glass); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 25px; border-radius: 20px; width: 90%; max-width: 500px;
+        }
+
+        /* --- CARA BERMAIN --- */
+        .tactic-box {
+            text-align: left; background: rgba(0,0,0,0.3); 
+            padding: 15px; border-radius: 10px; margin: 15px 0;
+            font-size: 0.9rem; border-left: 3px solid var(--p1-color);
+        }
+        .tactic-box ul { list-style: none; }
+        .tactic-box li { margin-bottom: 8px; color: #ccc; }
+        .tactic-box b { color: var(--p1-color); }
+
+        .btn {
+            padding: 12px 25px; border-radius: 50px; border: none;
+            font-family: 'Orbitron', sans-serif; font-weight: bold;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase; margin: 10px;
+        }
+        .btn-p1 { background: var(--p1-color); color: #000; box-shadow: 0 0 15px rgba(0,210,255,0.4); }
+        .btn-p2 { background: var(--p2-color); color: #fff; box-shadow: 0 0 15px rgba(255,0,88,0.4); }
+
+        /* --- HERO GRID --- */
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .hero-opt {
+            background: rgba(255,255,255,0.05); padding: 15px 5px; border-radius: 15px;
+            border: 2px solid transparent; cursor: pointer; transition: 0.3s;
+        }
+        .hero-opt:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+        .hero-opt h4 { font-size: 0.8rem; margin-bottom: 5px; color: gold; }
+        .hero-opt p { font-size: 0.6rem; color: #aaa; }
+
+        /* --- GAMEPLAY UI --- */
+        .game-grid { display: grid; grid-template-rows: 1fr 100px 1fr; height: 100vh; width: 100%; display: none; }
+        .zone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+        #p2-zone { transform: rotate(180deg); }
+        
+        .battle-center { background: #111; border-block: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .field { display: flex; gap: 10px; min-height: 110px; }
+        
+        .card {
+            width: 70px; height: 100px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; background: #1a1a1e; border: 2px solid #444;
+            transition: 0.3s; cursor: pointer;
+        }
+        .card.p1-active { border-color: var(--p1-color); }
+        .card.p2-active { border-color: var(--p2-color); }
+        .card.selected { transform: translateY(-15px); box-shadow: 0 0 20px var(--p1-color); border-color: white; }
+        .card.hidden-card { background: #222; color: transparent; border-style: solid; }
+
+        .badge { font-size: 0.7rem; letter-spacing: 1px; opacity: 0.6; }
+        #log-msg { font-weight: bold; color: var(--p1-color); font-size: 0.9rem; text-align: center; }
+
+        .pop {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 2000; padding: 10px 20px; border-radius: 10px;
+            background: white; color: black; font-weight: bold; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="pop" class="pop"></div>
+
+    <div id="screen-menu" class="screen">
+        <h1 style="color:var(--p1-color); font-family:'Orbitron'; margin-bottom:10px;">JANKEN HERO</h1>
+        <div class="glass-card">
+            <h3>PANDUAN & PILIH MODE</h3>
+            <div class="tactic-box">
+                <ul>
+                    <li>🎴 <b>Deck:</b> Setiap pemain memiliki 6 kartu (2x Batu, Gunting, Kertas).</li>
+                    <li>🛡️ <b>Field:</b> 3 kartu akan selalu diisi ulang otomatis dari tangan.</li>
+                    <li>⚔️ <b>Attack:</b> Klik kartumu, lalu klik kartu lawan untuk menyerang.</li>
+                    <li>🏆 <b>Win:</b> Game selesai jika total kartu salah satu pemain sisa 3.</li>
+                </ul>
+            </div>
+            <div style="margin-top: 10px;">
+                <button class="btn btn-p1" onclick="chooseMode('pvp')">PLAYER VS PLAYER</button>
+                <button class="btn btn-p2" onclick="chooseMode('bot')">PLAYER VS BOT</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-hero" class="screen hidden">
+        <div class="glass-card">
+            <h3 id="hero-title">PLAYER 1: PILIH HERO</h3>
+            <div class="hero-grid">
+                <div class="hero-opt" onclick="pickHero('Tank')">
+                    <h4>🛡️ TANK</h4>
+                    <p>Pertahanan lebih kuat</p>
+                </div>
+                <div class="hero-opt" onclick="pickHero('Mage')">
+                    <h4>🔮 MAGE</h4>
+                    <p>Strategi sihir</p>
+                </div>
+                <div class="hero-opt" onclick="pickHero('Assassin')">
+                    <h4>🗡️ ASSASSIN</h4>
+                    <p>Serangan kejutan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-game" class="game-grid">
+        <div id="p2-zone" class="zone">
+            <div class="badge">HAND: <span id="p2-hand-count">3</span> | <span id="p2-hero-label">HERO</span></div>
+            <div class="field" id="p2-field"></div>
+            <div class="badge" id="p2-name-label">PLAYER 2</div>
+        </div>
+
+        <div class="battle-center">
+            <div id="log-msg">SIAP BERTEMPUR?</div>
+            <div id="turn-txt" class="badge" style="color:white; opacity:1">GILIRAN P1</div>
+        </div>
+
+        <div id="p1-zone" class="zone">
+            <div class="badge">PLAYER 1</div>
+            <div class="field" id="p1-field"></div>
+            <div class="badge">HAND: <span id="p1-hand-count">3</span> | <span id="p1-hero-label">HERO</span></div>
+        </div>
+    </div>
+
+    <script>
+        const ICONS = { rock: '✊', paper: '✋', scissors: '✌️' };
+        let state = {
+            mode: 'bot',
+            turn: 'p1',
+            p1: { hero: '', hand: ['rock','rock','paper','paper','scissors','scissors'], field: [] },
+            p2: { hero: '', hand: ['rock','rock','paper','paper','scissors','scissors'], field: [] },
+            selectedIdx: null,
+            isLocked: false
+        };
+
+        function chooseMode(m) {
+            state.mode = m;
+            document.getElementById('screen-menu').classList.add('hidden');
+            document.getElementById('screen-hero').classList.remove('hidden');
+        }
+
+        function pickHero(h) {
+            if (!state.p1.hero) {
+                state.p1.hero = h;
+                if (state.mode === 'bot') {
+                    state.p2.hero = ['Tank', 'Mage', 'Assassin'][Math.floor(Math.random()*3)];
+                    startGame();
+                } else {
+                    document.getElementById('hero-title').innerText = "PLAYER 2: PILIH HERO";
+                }
+            } else {
+                state.p2.hero = h;
+                startGame();
+            }
+        }
+
+        function startGame() {
+            document.getElementById('screen-hero').classList.add('hidden');
+            document.getElementById('screen-game').style.display = 'grid';
+            document.getElementById('p1-hero-label').innerText = state.p1.hero;
+            document.getElementById('p2-hero-label').innerText = state.p2.hero;
+            document.getElementById('p2-name-label').innerText = state.mode === 'bot' ? "AI BOT" : "PLAYER 2";
+            
+            state.p1.hand.sort(() => Math.random() - 0.5);
+            state.p2.hand.sort(() => Math.random() - 0.5);
+            refillField('p1'); refillField('p2');
+            render();
+        }
+
+        function refillField(p) {
+            while (state[p].field.length < 3 && state[p].hand.length > 0) {
+                state[p].field.push(state[p].hand.shift());
+            }
+        }
+
+        function render() {
+            const p1f = document.getElementById('p1-field');
+            const p2f = document.getElementById('p2-field');
+            p1f.innerHTML = ''; p2f.innerHTML = '';
+
+            state.p1.field.forEach((card, i) => {
+                const div = document.createElement('div');
+                div.className = `card p1-active ${state.selectedIdx === i ? 'selected' : ''}`;
+                div.innerText = ICONS[card];
+                div.onclick = () => { if(!state.isLocked) { state.selectedIdx = i; render(); } };
+                p1f.appendChild(div);
+            });
+
+            state.p2.field.forEach((card, i) => {
+                const div = document.createElement('div');
+                div.className = `card p2-active hidden-card`;
+                div.innerText = '?';
+                div.onclick = () => { if(state.selectedIdx !== null) attack(i); };
+                p2f.appendChild(div);
+            });
+
+            document.getElementById('p1-hand-count').innerText = state.p1.hand.length;
+            document.getElementById('p2-hand-count').innerText = state.p2.hand.length;
+        }
+
+        function attack(targetIdx) {
+            state.isLocked = true;
+            const p1Card = state.p1.field[state.selectedIdx];
+            const p2Card = state.p2.field[targetIdx];
+
+            const targets = document.querySelectorAll('#p2-field .card');
+            targets[targetIdx].classList.remove('hidden-card');
+            targets[targetIdx].innerText = ICONS[p2Card];
+
+            const res = getWinner(p1Card, p2Card);
+            
+            setTimeout(() => {
+                if(res === 'p1') {
+                    state.p2.field.splice(targetIdx, 1);
+                    showPop("P1 MENANG!");
+                } else if(res === 'p2') {
+                    state.p1.field.splice(state.selectedIdx, 1);
+                    showPop("P1 KALAH!");
+                } else {
+                    showPop("SERI!");
+                }
+                
+                state.selectedIdx = null;
+                refillField('p1'); refillField('p2');
+                render();
+                
+                if(state.mode === 'bot') setTimeout(botMove, 1000);
+                else { state.isLocked = false; document.getElementById('log-msg').innerText = "GILIRAN P2!"; }
+            }, 800);
+        }
+
+        function botMove() {
+            if(checkGameOver()) return;
+            const bIdx = Math.floor(Math.random() * state.p2.field.length);
+            const tIdx = Math.floor(Math.random() * state.p1.field.length);
+            const res = getWinner(state.p2.field[bIdx], state.p1.field[tIdx]);
+
+            if(res === 'p1') { state.p1.field.splice(tIdx, 1); showPop("BOT MENANG!"); }
+            else if(res === 'p2') { state.p2.field.splice(bIdx, 1); showPop("BOT KALAH!"); }
+
+            refillField('p1'); refillField('p2');
+            render();
+            state.isLocked = false;
+            checkGameOver();
+        }
+
+        function getWinner(c1, c2) {
+            if(c1 === c2) return 'draw';
+            if((c1==='rock'&&c2==='scissors')||(c1==='scissors'&&c2==='paper')||(c1==='paper'&&c2==='rock')) return 'p1';
+            return 'p2';
+        }
+
+        function checkGameOver() {
+            const p1T = state.p1.field.length + state.p1.hand.length;
+            const p2T = state.p2.field.length + state.p2.hand.length;
+            if(p1T <= 3 || p2T <= 3) {
+                alert(`GAME OVER! ${p1T > p2T ? 'PLAYER 1' : 'LAWAN'} MENANG!`);
+                location.reload(); return true;
+            }
+            return false;
+        }
+
+        function showPop(m) {
+            const p = document.getElementById('pop');
+            p.innerText = m; p.style.display = 'block';
+            setTimeout(() => p.style.display = 'none', 800);
+        }
+    </script>
+</body>
+</html>
