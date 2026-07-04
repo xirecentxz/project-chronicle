@@ -268,14 +268,6 @@
   @keyframes toastin{ from{ transform:translateY(-20px); opacity:0;} to{transform:translateY(0);opacity:1;} }
   @keyframes toastout{ to{ transform:translateY(-20px); opacity:0;} }
 
-  /* ---------- Bottom nav ---------- */
-  .bottomnav{
-    position:fixed; bottom:0; left:0; right:0; z-index:50;
-    display:flex; justify-content:space-around; align-items:center;
-    padding:10px 6px calc(10px + env(safe-area-inset-bottom));
-    background:var(--glass-bg-strong); border-top:1px solid var(--glass-border);
-    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-  }
   .navicon{ font-size:21px; opacity:0.55; cursor:default; transition:opacity .2s, transform .2s; }
   .navicon:hover{ opacity:1; transform:translateY(-3px); }
 
@@ -365,13 +357,6 @@
       <button class="newbtn" id="newGameBtn">🔄 Papan Baru</button>
     </div>
   </div>
-</div>
-
-<div class="bottomnav">
-  <div class="navicon">🏠</div>
-  <div class="navicon">🔍</div>
-  <div class="navicon">🎥</div>
-  <div class="navicon">👤</div>
 </div>
 
 <div id="toast-holder"></div>
