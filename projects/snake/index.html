@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Neon Snake</title>
+
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="game-wrapper">
+
+    <!-- ============ HEADER: SCORE & LEVEL ============ -->
+    <header class="hud">
+      <div class="hud-box">
+        <span class="hud-label">SCORE</span>
+        <span class="hud-value" id="currentScore">0</span>
+      </div>
+      <div class="hud-box hud-level" id="levelBox">
+        <span class="hud-label">LEVEL</span>
+        <span class="hud-value" id="currentLevel">1</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">HIGH SCORE</span>
+        <span class="hud-value" id="highScore">0</span>
+      </div>
+    </header>
+
+    <!-- ============ GAME STAGE (canvas + overlay screens) ============ -->
+    <main class="stage">
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- START SCREEN -->
+      <section class="overlay" id="startScreen">
+        <h1 class="title">NEON<span>SNAKE</span></h1>
+        <p class="subtitle">Gunakan Arrow Keys / WASD untuk bergerak</p>
+        <button class="btn btn-primary" id="startBtn">Start Game</button>
+      </section>
+
+      <!-- GAME OVER SCREEN -->
+      <section class="overlay hidden" id="gameOverScreen">
+        <h2 class="title title-small">GAME OVER</h2>
+        <p class="final-score">Skor Akhir: <span id="finalScore">0</span></p>
+        <p class="new-record hidden" id="newRecordText">🏆 Rekor Baru!</p>
+        <button class="btn btn-primary" id="restartBtn">Play Again</button>
+      </section>
+
+      <!-- LEVEL UP FLASH (efek visual saat naik level) -->
+      <div class="level-up-flash" id="levelUpFlash">LEVEL UP!</div>
+    </main>
+
+    <!-- ============ MOBILE D-PAD (muncul otomatis di layar kecil via CSS) ============ -->
+    <div class="dpad" id="dpad">
+      <button class="dpad-btn dpad-up" data-dir="up" aria-label="Atas">▲</button>
+      <button class="dpad-btn dpad-left" data-dir="left" aria-label="Kiri">◀</button>
+      <button class="dpad-btn dpad-right" data-dir="right" aria-label="Kanan">▶</button>
+      <button class="dpad-btn dpad-down" data-dir="down" aria-label="Bawah">▼</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
