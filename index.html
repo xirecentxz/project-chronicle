@@ -95,7 +95,8 @@
     .project-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:var(--spacing-md) }
     .project-card{ background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:12px; padding:1rem; transition:transform var(--transition-fast); text-decoration:none; color:inherit; display:block }
     .project-card:hover{ transform:translateY(-6px) }
-    .project-thumb{ height:110px; border-radius:8px; background:linear-gradient(135deg,#6C63FF,#FF6584); margin-bottom:0.6rem; display:flex; align-items:center; justify-content:center; font-size:1.6rem }
+    .project-thumb{ height:110px; border-radius:8px; background:linear-gradient(135deg,#6C63FF,#FF6584); margin-bottom:0.6rem; display:flex; align-items:center; justify-content:center; font-size:1.6rem; position:relative; overflow:hidden }
+    .project-favicon{ position:absolute; bottom:8px; right:8px; width:28px; height:28px; border-radius:6px; box-shadow:0 4px 10px rgba(0,0,0,0.4); background:rgba(255,255,255,0.06); object-fit:cover; border:1px solid rgba(255,255,255,0.06) }
     .project-title{ font-weight:700; margin-bottom:0.25rem }
     .project-desc{ color:var(--color-text-secondary); font-size:0.9rem }
 
@@ -111,7 +112,7 @@
 <header>
   <div class="wrapper">
     <div class="header-inner">
-      <a class="logo" href="#" aria-label="xirecentxz project chronicle home"><span style="font-size:1.4rem">📓</span>&nbsp;<span>xirecentxz<span style="color:var(--color-text-tertiary)">/</span><span style="background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent">project-chronicle</span></span></a>
+      <a class="logo" href="#" aria-label="xirecentxz project chronicle home"><span style="font-size:1.4rem">📓</span>&nbsp;<span>xirecentxz<span style="color:var(--color-text-tertiary)">/</span><span style="font-weight:800">project-chronicle</span></span></a>
       <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
         <span class="tagline">A collection of front-end experiments, mini-games, UI clones & web doodles</span>
         <div class="badge-row" style="display:flex;gap:0.5rem">
@@ -139,39 +140,46 @@
 
     <div class="project-grid">
       <a class="project-card" href="projects/janken-game/" title="Janken - Rock Paper Scissors">
-        <div class="project-thumb">✊✌️✋</div>
+        <div class="project-thumb">✊✌️✋<img class="project-favicon" src="projects/janken-game/favicon.ico" alt="Janken favicon"></div>
         <div class="project-title">Janken Game</div>
         <div class="project-desc">Classic rock-paper-scissors mini game.</div>
       </a>
 
       <a class="project-card" href="projects/plinko-web-game/" title="Plinko Web Game">
-        <div class="project-thumb">🎯</div>
+        <div class="project-thumb">🎯<img class="project-favicon" src="projects/plinko-web-game/favicon.ico" alt="Plinko favicon"></div>
         <div class="project-title">Plinko</div>
         <div class="project-desc">Plinko-style drop game with physics-like feel.</div>
       </a>
 
       <a class="project-card" href="projects/pong-classic/" title="Pong Classic">
-        <div class="project-thumb">🏓</div>
+        <div class="project-thumb">🏓<img class="project-favicon" src="projects/pong-classic/favicon.ico" alt="Pong favicon"></div>
         <div class="project-title">Pong Classic</div>
         <div class="project-desc">Retro Pong clone with keyboard controls.</div>
       </a>
 
       <a class="project-card" href="projects/roulette-web-game/" title="Roulette Web Game">
-        <div class="project-thumb">🎡</div>
+        <div class="project-thumb">🎡<img class="project-favicon" src="projects/roulette-web-game/favicon.ico" alt="Roulette favicon"></div>
         <div class="project-title">Roulette</div>
         <div class="project-desc">Simple roulette demo with spin animation.</div>
       </a>
 
       <a class="project-card" href="projects/slot-machine/" title="Slot Machine">
-        <div class="project-thumb">🎰</div>
+        <div class="project-thumb">🎰<img class="project-favicon" src="projects/slot-machine/favicon.ico" alt="Slot favicon"></div>
         <div class="project-title">Slot Machine</div>
         <div class="project-desc">Slot machine UI and logic experiment.</div>
       </a>
 
       <a class="project-card" href="projects/snake/" title="Snake Game">
-        <div class="project-thumb">🐍</div>
+        <div class="project-thumb">🐍<img class="project-favicon" src="projects/snake/favicon.ico" alt="Snake favicon"></div>
         <div class="project-title">Snake</div>
         <div class="project-desc">Classic snake game built for the browser.</div>
+      </a>
+
+      <!-- Meowdoku moved into Games -->
+      <a class="project-card" href="projects/meowdoku/" title="Meowdoku">
+        <div class="project-thumb">😺<img class="project-favicon" src="projects/meowdoku/favicon.ico" alt="Meowdoku favicon"></div>
+        <div class="project-title">Meowdoku</div>
+        <div class="project-desc">Puzzle / Sudoku-like UI featuring cat theme.</div>
       </a>
     </div>
   </section>
@@ -184,25 +192,25 @@
 
     <div class="project-grid">
       <a class="project-card" href="projects/all-sales-order/" title="WA Cleaner / Data Deduplication">
-        <div class="project-thumb">🧾</div>
+        <div class="project-thumb">🧾<img class="project-favicon" src="projects/all-sales-order/favicon.ico" alt="WA Cleaner favicon"></div>
         <div class="project-title">WA Cleaner (All Sales Order)</div>
         <div class="project-desc">Upload sales/contacts, clean duplicates and export CSV/XLSX.</div>
       </a>
 
       <a class="project-card" href="projects/crm-birthday/" title="CRM Birthday Pro">
-        <div class="project-thumb">🎂</div>
+        <div class="project-thumb">🎂<img class="project-favicon" src="projects/crm-birthday/favicon.ico" alt="CRM favicon"></div>
         <div class="project-title">CRM Birthday Pro</div>
         <div class="project-desc">Birthday monitoring dashboard and exportable reports.</div>
       </a>
 
       <a class="project-card" href="projects/event-slot/" title="Event Slot - staff/player">
-        <div class="project-thumb">🎟️</div>
+        <div class="project-thumb">🎟️<img class="project-favicon" src="projects/event-slot/favicon.ico" alt="Event Slot favicon"></div>
         <div class="project-title">Event Slot</div>
         <div class="project-desc">Staff/player code system and slot mini-game for events.</div>
       </a>
 
       <a class="project-card" href="projects/techpulse/" title="TechPulse">
-        <div class="project-thumb">⚡</div>
+        <div class="project-thumb">⚡<img class="project-favicon" src="projects/techpulse/favicon.ico" alt="TechPulse favicon"></div>
         <div class="project-title">TechPulse</div>
         <div class="project-desc">A small web app / dashboard experiment (project folder present).</div>
       </a>
@@ -217,34 +225,29 @@
 
     <div class="project-grid">
       <a class="project-card" href="projects/neumorphic_clock/" title="Neumorphic Clock">
-        <div class="project-thumb">🕒</div>
+        <div class="project-thumb">🕒<img class="project-favicon" src="projects/neumorphic_clock/favicon.ico" alt="Neumorphic Clock favicon"></div>
         <div class="project-title">Neumorphic Clock</div>
         <div class="project-desc">Neumorphic-styled clock UI experiment.</div>
       </a>
 
       <a class="project-card" href="projects/galeri-salju/" title="Galeri Salju">
-        <div class="project-thumb">❄️</div>
+        <div class="project-thumb">❄️<img class="project-favicon" src="projects/galeri-salju/favicon.ico" alt="Galeri Salju favicon"></div>
         <div class="project-title">Galeri Salju</div>
         <div class="project-desc">Visual gallery / snowfall demo.</div>
       </a>
 
       <a class="project-card" href="projects/web-alumni/" title="Web Alumni">
-        <div class="project-thumb">🏫</div>
+        <div class="project-thumb">🏫<img class="project-favicon" src="projects/web-alumni/favicon.ico" alt="Web Alumni favicon"></div>
         <div class="project-title">Web Alumni</div>
         <div class="project-desc">Simple alumni site/demo located in projects/web-alumni.</div>
       </a>
 
       <a class="project-card" href="projects/onet/" title="Onet">
-        <div class="project-thumb">🔤</div>
+        <div class="project-thumb">🔤<img class="project-favicon" src="projects/onet/favicon.ico" alt="Onet favicon"></div>
         <div class="project-title">Onet</div>
         <div class="project-desc">Word/quiz UI experiment (project folder present).</div>
       </a>
 
-      <a class="project-card" href="projects/meowdoku/" title="Meowdoku">
-        <div class="project-thumb">😺</div>
-        <div class="project-title">Meowdoku</div>
-        <div class="project-desc">Puzzle / Sudoku-like UI featuring cat theme.</div>
-      </a>
     </div>
   </section>
 
@@ -256,7 +259,7 @@
 
     <div class="project-grid">
       <a class="project-card" href="projects/techpulse/" title="TechPulse (duplicate entry for visibility)">
-        <div class="project-thumb">🧭</div>
+        <div class="project-thumb">🧭<img class="project-favicon" src="projects/techpulse/favicon.ico" alt="TechPulse favicon"></div>
         <div class="project-title">TechPulse</div>
         <div class="project-desc">Miscellaneous web experiment (see folder).</div>
       </a>
@@ -265,7 +268,7 @@
 
   <div class="disclaimer-section" style="margin-top:2rem;padding:1rem;border-radius:12px;background:var(--glass-bg);border:1px solid var(--glass-border);">
     <div style="font-weight:700;color:var(--color-text-tertiary)">Notes</div>
-    <div style="color:var(--color-text-secondary);margin-top:0.5rem">I removed project cards that had no link and grouped the existing folders into categories. Each card points to the project's folder under <code>projects/</code>. If you want different categories or titles/descriptions, tell me which ones to change.</div>
+    <div style="color:var(--color-text-secondary);margin-top:0.5rem">I removed project cards that had no link and grouped the existing folders into categories. Each card points to the project's folder and now includes a small favicon placeholder (projects/<folder>/favicon.ico) so each project can show its main-site icon if you add one to the project's folder.</div>
   </div>
 
 </main>
