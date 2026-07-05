@@ -1,0 +1,125 @@
+/* Reset Dasar dan Latar Belakang (Dark Mode & Grid) */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #1a1a20; /* Warna latar gelap sesuai gambar */
+    
+    /* Efek Grid Halus pada Latar */
+    background-image: 
+        linear-gradient(45deg, #222 25%, transparent 25%), 
+        linear-gradient(-45deg, #222 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #222 75%),
+        linear-gradient(-45deg, transparent 75%, #222 75%);
+    background-size: 40px 40px;
+    background-position: 0 0, 0 20px, 20px 20px, 20px 0;
+    
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+/* Container Utama untuk Tata Letak */
+.container {
+    display: flex;
+    align-items: center;
+    gap: 100px;
+    width: 80%;
+    max-width: 1200px;
+}
+
+/* Penataan Teks */
+.text-container {
+    flex: 1;
+}
+
+.text-container h1 {
+    font-size: 3rem;
+    color: #c9acff; /* Warna ungu sesuai gambar */
+    margin-bottom: 10px;
+}
+
+.text-container p {
+    font-size: 1.5rem;
+    color: #999; /* Warna abu-abu halus */
+    line-height: 1.4;
+}
+
+/* Desain Neumorphic Jam */
+.clock-case {
+    width: 350px;
+    height: 350px;
+    background-color: #1a1a20;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Efek Bayangan Neumorphic (Kombinasi Bayangan Terang & Gelap) */
+    box-shadow: 
+        15px 15px 30px #0e0e11,    /* Bayangan Gelap (Kanan Bawah) */
+        -15px -15px 30px #26262f;  /* Bayangan Terang (Kiri Atas) */
+    position: relative;
+}
+
+/* Wajah Jam (Dial) */
+.clock-face {
+    width: 90%;
+    height: 90%;
+    background-color: #1a1a20;
+    border-radius: 50%;
+    position: relative;
+    
+    /* Efek Inset Neumorphic (Bayangan Dalam) */
+    box-shadow: 
+        inset 10px 10px 20px #0e0e11,
+        inset -10px -10px 20px #26262f;
+}
+
+/* Jarum Jam Umum */
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom;
+    border-radius: 5px;
+}
+
+/* Jarum Jam */
+.hour-hand {
+    width: 8px;
+    height: 25%;
+    background-color: #fff;
+    transform: translateX(-50%) rotate(30deg); /* Contoh posisi */
+}
+
+/* Jarum Menit */
+.minute-hand {
+    width: 6px;
+    height: 35%;
+    background-color: #fff;
+    transform: translateX(-50%) rotate(150deg); /* Contoh posisi */
+}
+
+/* Jarum Detik */
+.second-hand {
+    width: 2px;
+    height: 40%;
+    background-color: #c9acff; /* Warna ungu aksen sesuai gambar */
+    transform: translateX(-50%) rotate(270deg); /* Contoh posisi */
+}
+
+/* Titik Pusat */
+.center-nut {
+    width: 15px;
+    height: 15px;
+    background-color: #c9acff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
