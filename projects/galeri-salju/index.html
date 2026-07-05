@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeri Seni Salju — CSS Art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#87ceeb;
+    --sky-bottom:#e0f7ff;
+    --mountain-far:#c9d9e6;
+    --mountain-near:#a9c3d6;
+    --snow-cap:#ffffff;
+    --hill-color:#f2f8ff;
+    --hill-shadow:#dcebf5;
+    --glow-color:#fff7cc;
+    --tree-color:#1f3d2e;
+    --tree-snow:#ffffff;
+    --text-color:#2b3a42;
+    --panel-bg:rgba(255,255,255,0.25);
+    --panel-border:rgba(255,255,255,0.4);
+    --star-opacity:0;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    width:100%; height:100%; overflow:hidden;
+    font-family:'Quicksand', sans-serif;
+    color:var(--text-color);
+  }
+
+  #scene{
+    position:fixed; inset:0;
+    background:linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+    transition: background 1.5s ease;
+    overflow:hidden;
+  }
+
+  /* ---------- STARS ---------- */
+  .stars{
+    position:absolute; inset:0;
+    opacity:var(--star-opacity);
+    transition:opacity 1.5s ease;
+    pointer-events:none;
+  }
+  .star{
+    position:absolute;
+    width:2px; height:2px;
+    background:#fff;
+    border-radius:50%;
+    animation:twinkle 3s infinite ease-in-out;
+    box-shadow:0 0 4px #fff;
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:0.2; transform:scale(1); }
+    50%{ opacity:1; transform:scale(1.4); }
+  }
+
+  /* ---------- SUN / MOON ---------- */
+  .celestial{
+    position:absolute;
+    top:8%; right:15%;
+    width:90px; height:90px;
+    border-radius:50%;
+    transition: background 1.5s ease, box-shadow 1.5s ease, top 1.5s ease, right 1.5s ease;
+  }
+  .celestial.sun{
+    background: radial-gradient(circle at 35% 35%, #fff6d0, var(--sun-color,#ffd447));
+    box-shadow: 0 0 60px 30px var(--glow-color);
+  }
+  .celestial.moon{
+    background: radial-gradient(circle at 35% 35%, #ffffff, #cfd8e3);
+    box-shadow: 0 0 40px 20px rgba(255,255,255,0.35);
+  }
+  .celestial.moon::before,
+  .celestial.moon::after{
+    content:"";
+    position:absolute;
+    background:rgba(180,190,205,0.6);
+    border-radius:50%;
+  }
+  .celestial.moon::before{ width:16px; height:16px; top:18px; left:14px; }
+  .celestial.moon::after{ width:10px; height:10px; top:45px; left:50px; }
+
+  /* ---------- MOUNTAINS ---------- */
+  .mountain-layer{
+    position:absolute;
+    bottom:20%;
+    width:100%;
+    transition: background 1.5s ease, opacity 1.5s ease;
+  }
+  .mountain-far{
+    height:32%;
+    background:var(--mountain-far);
+    clip-path: polygon(0% 100%, 0% 60%, 12% 30%, 22% 55%, 33% 15%, 45% 50%, 58% 20%, 70% 58%, 82% 25%, 92% 55%, 100% 40%, 100% 100%);
+    opacity:0.85;
+  }
+  .mountain-near{
+    height:26%;
+    background:var(--mountain-near);
+    clip-path: polygon(0% 100%, 0% 55%, 10% 20%, 20% 50%, 30% 10%, 42% 48%, 55% 18%, 66% 52%, 78% 22%, 88% 50%, 100% 30%, 100% 100%);
+  }
+  .mountain-near::after, .mountain-far::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(to bottom, var(--snow-cap) 0%, transparent 22%);
+    clip-path:inherit;
+    opacity:0.9;
+  }
+
+  /* ---------- GROUND / HILLS ---------- */
+  .hill{
+    position:absolute;
+    bottom:-10%;
+    width:140%;
+    left:-20%;
+    height:35%;
+    background: radial-gradient(ellipse at center, var(--hill-color) 60%, var(--hill-shadow) 100%);
+    border-radius:50% 50% 0 0 / 100% 100% 0 0;
+    transition: background 1.5s ease;
+  }
+  .hill.back{
+    height:28%;
+    bottom:-14%;
+    opacity:0.85;
+    z-index:1;
+  }
+  .hill.front{
+    height:24%;
+    bottom:-16%;
+    left:-10%;
+    width:120%;
+    z-index:3;
+  }
+
+  /* ---------- PINE TREES ---------- */
+  .tree{
+    position:absolute;
+    bottom:8%;
+    width:70px;
+    height:110px;
+    z-index:2;
+  }
+  .tree .layer{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:100%;
+    background:var(--tree-color);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    transition: background 1.5s ease;
+  }
+  .tree .layer.l1{ top:0;   height:45px; width:75%; }
+  .tree .layer.l2{ top:28px; height:50px; width:90%; }
+  .tree .layer.l3{ top:58px; height:55px; width:100%; }
+  .tree .layer .snow{
+    position:absolute;
+    top:0; left:50%;
+    transform:translateX(-50%);
+    width:60%;
+    height:35%;
+    background:var(--tree-snow);
+    clip-path: polygon(50% 0%, 15% 100%, 85% 100%);
+    opacity:0.95;
+  }
+  .tree .trunk{
+    position:absolute;
+    bottom:-14px; left:50%;
+    transform:translateX(-50%);
+    width:12px; height:16px;
+    background:#5a3d2b;
+    border-radius:2px;
+  }
+  .tree.small{ transform:scale(0.65); }
+  .tree.big{ transform:scale(1.15); }
+
+  /* ---------- CANVAS SALJU ---------- */
+  #snowCanvas{
+    position:fixed; inset:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:10;
+  }
+
+  /* ---------- UI ---------- */
+  #clock{
+    position:fixed;
+    top:18px; right:20px;
+    background:var(--panel-bg);
+    border:1px solid var(--panel-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding:10px 18px;
+    border-radius:14px;
+    font-family:'Poppins', sans-serif;
+    font-weight:600;
+    font-size:1.1rem;
+    letter-spacing:1px;
+    z-index:20;
+    box-shadow:0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  #modeIndicator{
+    position:fixed;
+    top:18px; left:20px;
+    background:var(--panel-bg);
+    border:1px solid var(--panel-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding:8px 16px;
+    border-radius:14px;
+    font-size:0.85rem;
+    font-weight:600;
+    z-index:20;
+    box-shadow:0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  #controls{
+    position:fixed;
+    bottom:22px; left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    background:var(--panel-bg);
+    border:1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding:12px 16px;
+    border-radius:20px;
+    z-index:20;
+    box-shadow:0 6px 24px rgba(0,0,0,0.12);
+    max-width:92vw;
+  }
+
+  .ctrl-btn{
+    border:none;
+    outline:none;
+    background:rgba(255,255,255,0.35);
+    color:var(--text-color);
+    padding:10px 14px;
+    border-radius:14px;
+    font-family:'Quicksand', sans-serif;
+    font-weight:600;
+    font-size:0.9rem;
+    cursor:pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    white-space:nowrap;
+  }
+  .ctrl-btn:hover{
+    background:rgba(255,255,255,0.6);
+    transform:translateY(-2px);
+  }
+  .ctrl-btn:active{ transform:translateY(0px) scale(0.97); }
+  .ctrl-btn.active{
+    background:rgba(255,255,255,0.85);
+    box-shadow:0 0 0 2px rgba(255,255,255,0.9) inset;
+  }
+  .ctrl-btn.reset{
+    background:rgba(60,80,100,0.35);
+    color:#fff;
+  }
+  .ctrl-btn.reset:hover{ background:rgba(60,80,100,0.55); }
+
+  h1.title{
+    position:fixed;
+    top:18px; left:50%;
+    transform:translateX(-50%);
+    font-family:'Poppins', sans-serif;
+    font-weight:300;
+    font-size:1.1rem;
+    letter-spacing:3px;
+    color:var(--text-color);
+    text-shadow:0 2px 10px rgba(255,255,255,0.5);
+    z-index:15;
+    text-align:center;
+    pointer-events:none;
+    opacity:0.9;
+  }
+
+  @media (max-width:600px){
+    h1.title{ font-size:0.8rem; letter-spacing:1.5px; top:70px;}
+    #modeIndicator{ top:auto; bottom:100px; left:12px; font-size:0.7rem; }
+    #clock{ font-size:0.9rem; padding:8px 14px; }
+    .ctrl-btn{ font-size:0.78rem; padding:8px 10px; }
+    .tree{ width:50px; height:80px; }
+    .celestial{ width:60px; height:60px; top:6%; right:10%; }
+  }
+</style>
+</head>
+<body class="day">
+
+<h1 class="title">❄ GALERI SALJU ❄</h1>
+<div id="modeIndicator">Mode: Realtime</div>
+<div id="clock">00:00:00</div>
+
+<div id="scene">
+  <div class="stars" id="stars"></div>
+  <div class="celestial sun" id="celestial"></div>
+
+  <div class="mountain-layer mountain-far"></div>
+  <div class="mountain-layer mountain-near"></div>
+
+  <div class="hill back"></div>
+
+  <!-- Pohon-pohon pinus -->
+  <div class="tree small" style="left:8%;">
+    <div class="layer l1"><div class="snow"></div></div>
+    <div class="layer l2"><div class="snow"></div></div>
+    <div class="layer l3"><div class="snow"></div></div>
+    <div class="trunk"></div>
+  </div>
+  <div class="tree big" style="left:20%;">
+    <div class="layer l1"><div class="snow"></div></div>
+    <div class="layer l2"><div class="snow"></div></div>
+    <div class="layer l3"><div class="snow"></div></div>
+    <div class="trunk"></div>
+  </div>
+  <div class="tree" style="left:70%;">
+    <div class="layer l1"><div class="snow"></div></div>
+    <div class="layer l2"><div class="snow"></div></div>
+    <div class="layer l3"><div class="snow"></div></div>
+    <div class="trunk"></div>
+  </div>
+  <div class="tree big" style="left:83%;">
+    <div class="layer l1"><div class="snow"></div></div>
+    <div class="layer l2"><div class="snow"></div></div>
+    <div class="layer l3"><div class="snow"></div></div>
+    <div class="trunk"></div>
+  </div>
+  <div class="tree small" style="left:45%;">
+    <div class="layer l1"><div class="snow"></div></div>
+    <div class="layer l2"><div class="snow"></div></div>
+    <div class="layer l3"><div class="snow"></div></div>
+    <div class="trunk"></div>
+  </div>
+
+  <div class="hill front"></div>
+</div>
+
+<canvas id="snowCanvas"></canvas>
+
+<div id="controls">
+  <button class="ctrl-btn" data-mode="morning">🌅 Pagi</button>
+  <button class="ctrl-btn" data-mode="day">☀️ Siang</button>
+  <button class="ctrl-btn" data-mode="evening">🌇 Sore</button>
+  <button class="ctrl-btn" data-mode="night">🌙 Malam</button>
+  <button class="ctrl-btn reset" id="resetBtn">🔙 Kembali ke Realtime</button>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= PALET WAKTU ================= */
+  const themes = {
+    morning: {
+      body:'morning',
+      skyTop:'#ff9966', skyBottom:'#a7d8f0',
+      mountainFar:'#d9c4c9', mountainNear:'#c9a9b6',
+      snowCap:'#fff3e0',
+      hillColor:'#ffeede', hillShadow:'#f0cfb5',
+      glow:'#ffe0a3', sunColor:'#ffb84d',
+      treeColor:'#2e4a35', treeSnow:'#fff6ea',
+      textColor:'#5a3a2b',
+      panelBg:'rgba(255,240,220,0.35)', panelBorder:'rgba(255,255,255,0.5)',
+      starOpacity:0, celestial:'sun',
+      sunTop:'12%', sunRight:'60%'
+    },
+    day: {
+      body:'day',
+      skyTop:'#4a90d9', skyBottom:'#bfe7fb',
+      mountainFar:'#c9d9e6', mountainNear:'#a9c3d6',
+      snowCap:'#ffffff',
+      hillColor:'#f5faff', hillShadow:'#dcebf5',
+      glow:'#fff7cc', sunColor:'#ffd447',
+      treeColor:'#1f3d2e', treeSnow:'#ffffff',
+      textColor:'#2b3a42',
+      panelBg:'rgba(255,255,255,0.3)', panelBorder:'rgba(255,255,255,0.5)',
+      starOpacity:0, celestial:'sun',
+      sunTop:'8%', sunRight:'15%'
+    },
+    evening: {
+      body:'evening',
+      skyTop:'#ff7e5f', skyBottom:'#7b4397',
+      mountainFar:'#8d7a9e', mountainNear:'#6d5487',
+      snowCap:'#ffd9c2',
+      hillColor:'#f0d8e6', hillShadow:'#c9a3c2',
+      glow:'#ff9a76', sunColor:'#ff7048',
+      treeColor:'#20202f', treeSnow:'#ffe4d6',
+      textColor:'#3a2b42',
+      panelBg:'rgba(255,220,230,0.28)', panelBorder:'rgba(255,255,255,0.4)',
+      starOpacity:0.3, celestial:'sun',
+      sunTop:'55%', sunRight:'12%'
+    },
+    night: {
+      body:'night',
+      skyTop:'#0b1026', skyBottom:'#1c2541',
+      mountainFar:'#22314a', mountainNear:'#141c30',
+      snowCap:'#c9d6e8',
+      hillColor:'#e5edf7', hillShadow:'#b7c6dd',
+      glow:'rgba(255,255,255,0.35)', sunColor:'#cfd8e3',
+      treeColor:'#0d1a14', treeSnow:'#dbe6f2',
+      textColor:'#e5edf7',
+      panelBg:'rgba(20,30,50,0.35)', panelBorder:'rgba(255,255,255,0.25)',
+      starOpacity:1, celestial:'moon',
+      sunTop:'10%', sunRight:'18%'
+    }
+  };
+
+  const root = document.documentElement.style;
+  const body = document.body;
+  const celestialEl = document.getElementById('celestial');
+  const modeIndicator = document.getElementById('modeIndicator');
+  const clockEl = document.getElementById('clock');
+  const starsContainer = document.getElementById('stars');
+  const buttons = document.querySelectorAll('.ctrl-btn[data-mode]');
+  const resetBtn = document.getElementById('resetBtn');
+
+  let isRealtime = true;
+  let currentPeriod = null;
+
+  /* ================= GENERATE BINTANG ================= */
+  function generateStars(count){
+    starsContainer.innerHTML = '';
+    for(let i=0;i<count;i++){
+      const s = document.createElement('div');
+      s.className = 'star';
+      s.style.top = Math.random()*70 + '%';
+      s.style.left = Math.random()*100 + '%';
+      s.style.animationDelay = (Math.random()*3) + 's';
+      s.style.width = s.style.height = (Math.random()*2 + 1) + 'px';
+      starsContainer.appendChild(s);
+    }
+  }
+  generateStars(120);
+
+  /* ================= TENTUKAN PERIODE DARI JAM ================= */
+  function getPeriodFromHour(hour){
+    if(hour >= 5 && hour < 9) return 'morning';
+    if(hour >= 9 && hour < 16) return 'day';
+    if(hour >= 16 && hour < 19) return 'evening';
+    return 'night';
+  }
+
+  const periodLabel = {
+    morning:'Pagi', day:'Siang', evening:'Sore', night:'Malam'
+  };
+
+  /* ================= TERAPKAN TEMA ================= */
+  function applyTheme(period){
+    if(period === currentPeriod) return;
+    currentPeriod = period;
+    const t = themes[period];
+
+    body.className = t.body;
+
+    root.setProperty('--sky-top', t.skyTop);
+    root.setProperty('--sky-bottom', t.skyBottom);
+    root.setProperty('--mountain-far', t.mountainFar);
+    root.setProperty('--mountain-near', t.mountainNear);
+    root.setProperty('--snow-cap', t.snowCap);
+    root.setProperty('--hill-color', t.hillColor);
+    root.setProperty('--hill-shadow', t.hillShadow);
+    root.setProperty('--glow-color', t.glow);
+    root.setProperty('--sun-color', t.sunColor);
+    root.setProperty('--tree-color', t.treeColor);
+    root.setProperty('--tree-snow', t.treeSnow);
+    root.setProperty('--text-color', t.textColor);
+    root.setProperty('--panel-bg', t.panelBg);
+    root.setProperty('--panel-border', t.panelBorder);
+    root.setProperty('--star-opacity', t.starOpacity);
+
+    celestialEl.className = 'celestial ' + t.celestial;
+    celestialEl.style.top = t.sunTop;
+    celestialEl.style.right = t.sunRight;
+
+    updateModeIndicator();
+  }
+
+  function updateModeIndicator(){
+    if(isRealtime){
+      modeIndicator.textContent = 'Mode: Realtime — ' + periodLabel[currentPeriod];
+    } else {
+      modeIndicator.textContent = 'Mode: Manual - ' + periodLabel[currentPeriod];
+    }
+    buttons.forEach(b=>{
+      b.classList.toggle('active', !isRealtime && b.dataset.mode === currentPeriod);
+    });
+  }
+
+  /* ================= REALTIME CHECK ================= */
+  function checkRealtime(){
+    if(!isRealtime) return;
+    const hour = new Date().getHours();
+    applyTheme(getPeriodFromHour(hour));
+  }
+
+  /* ================= JAM DIGITAL ================= */
+  function updateClock(){
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    const ss = String(now.getSeconds()).padStart(2,'0');
+    clockEl.textContent = `${hh}:${mm}:${ss}`;
+    checkRealtime();
+  }
+
+  /* ================= EVENT TOMBOL ================= */
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      isRealtime = false;
+      currentPeriod = null; // force re-apply
+      applyTheme(btn.dataset.mode);
+    });
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    isRealtime = true;
+    currentPeriod = null;
+    checkRealtime();
+  });
+
+  /* ================= INISIALISASI ================= */
+  applyTheme(getPeriodFromHour(new Date().getHours()));
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  /* ================= CANVAS SALJU ================= */
+  const canvas = document.getElementById('snowCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  function resizeCanvas(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const FLAKE_COUNT = 110;
+  let flakes = [];
+
+  function createFlake(){
+    return {
+      x: Math.random()*W,
+      y: Math.random()*H - H,
+      r: Math.random()*3 + 1.5,
+      speed: Math.random()*1.2 + 0.6,
+      drift: Math.random()*0.6 - 0.3,
+      sway: Math.random()*Math.PI*2,
+      swaySpeed: Math.random()*0.02 + 0.01,
+      opacity: Math.random()*0.5 + 0.5
+    };
+  }
+
+  for(let i=0;i<FLAKE_COUNT;i++){
+    flakes.push(createFlake());
+  }
+
+  function drawSnow(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#ffffff';
+    for(const f of flakes){
+      f.y += f.speed;
+      f.sway += f.swaySpeed;
+      f.x += Math.sin(f.sway) * 0.5 + f.drift;
+
+      if(f.y > H + 10){
+        f.y = -10;
+        f.x = Math.random()*W;
+      }
+      if(f.x > W + 10) f.x = -10;
+      if(f.x < -10) f.x = W + 10;
+
+      ctx.globalAlpha = f.opacity;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(drawSnow);
+  }
+  requestAnimationFrame(drawSnow);
+
+})();
+</script>
+</body>
+</html>
