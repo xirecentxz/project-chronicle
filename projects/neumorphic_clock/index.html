@@ -265,6 +265,16 @@
   const secondHand = document.getElementById('secondHand');
   const digitalTime = document.getElementById('digitalTime');
 
+  // Variabel untuk melacak jumlah putaran (loop)
+  let secondLoops = 0;
+  let minuteLoops = 0;
+  let hourLoops = 0;
+  
+  // Variabel untuk menyimpan derajat putaran sebelumnya
+  let prevSecondDeg = null;
+  let prevMinuteDeg = null;
+  let prevHourDeg = null;
+
   function pad(n){
     return n.toString().padStart(2, '0');
   }
@@ -275,17 +285,43 @@
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
 
-    const secondDeg = seconds * 6;
-    const minuteDeg = (minutes * 6) + (seconds * 0.1);
-    const hourDeg = ((hours % 12) * 30) + (minutes * 0.5);
+    // Hitung derajat dasar (0 - 359 derajat)
+    let currentSecondDeg = seconds * 6;
+    let currentMinuteDeg = (minutes * 6) + (seconds * 0.1);
+    let currentHourDeg = ((hours % 12) * 30) + (minutes * 0.5);
 
-    hourHand.style.transform = `rotate(${hourDeg}deg)`;
-    minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
-    secondHand.style.transform = `rotate(${secondDeg}deg)`;
+    // Inisialisasi putaran pertama
+    if (prevSecondDeg === null) {
+      prevSecondDeg = currentSecondDeg;
+      prevMinuteDeg = currentMinuteDeg;
+      prevHourDeg = currentHourDeg;
+    }
+
+    // Cek jika terjadi lompatan mundur (misal dari 354 ke 0)
+    // Jika derajat baru lebih kecil jauh dari yang sebelumnya, berarti sudah lewat 1 putaran
+    if (currentSecondDeg < prevSecondDeg - 180) secondLoops++;
+    if (currentMinuteDeg < prevMinuteDeg - 180) minuteLoops++;
+    if (currentHourDeg < prevHourDeg - 180) hourLoops++;
+
+    // Update derajat sebelumnya ke derajat saat ini
+    prevSecondDeg = currentSecondDeg;
+    prevMinuteDeg = currentMinuteDeg;
+    prevHourDeg = currentHourDeg;
+
+    // Kalkulasi derajat final dengan menambahkan 360 derajat per loop
+    const finalSecondDeg = currentSecondDeg + (secondLoops * 360);
+    const finalMinuteDeg = currentMinuteDeg + (minuteLoops * 360);
+    const finalHourDeg = currentHourDeg + (hourLoops * 360);
+
+    // Terapkan ke elemen HTML
+    hourHand.style.transform = `rotate(${finalHourDeg}deg)`;
+    minuteHand.style.transform = `rotate(${finalMinuteDeg}deg)`;
+    secondHand.style.transform = `rotate(${finalSecondDeg}deg)`;
 
     digitalTime.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
   }
 
+  // Panggil langsung agar tidak ada jeda 1 detik di awal
   updateClock();
   setInterval(updateClock, 1000);
 </script>
