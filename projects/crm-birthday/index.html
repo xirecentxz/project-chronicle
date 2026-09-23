@@ -39,7 +39,10 @@
                 <p class="text-slate-500 font-medium ml-1">Automated Birthday Monitoring System</p>
             </div>
             
-            <div id="downloadArea" class="hidden">
+            <div id="downloadArea" class="hidden flex gap-3 items-center">
+                <button onclick="resetData()" class="bg-rose-50 border border-rose-200 hover:bg-rose-500 hover:text-white text-rose-600 px-5 py-3 rounded-2xl font-bold transition-all shadow-sm">
+                    🗑️ Reset Data
+                </button>
                 <button onclick="downloadExcel()" class="group flex items-center gap-3 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-slate-700 px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Export Report
@@ -55,6 +58,7 @@
                     </div>
                     <p id="fileStatus" class="mb-1 text-sm font-bold text-slate-700">Drop your Excel file here</p>
                     <p class="text-xs text-slate-400 font-medium italic" id="fileNameDisp">Supported: .xlsx, .xls</p>
+                    <p class="text-[10px] mt-3 font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">🔒 100% Secure & Private. Data stays in your browser.</p>
                 </div>
                 <input type="file" id="excelFile" accept=".xlsx, .xls" class="hidden" />
             </label>
@@ -134,32 +138,73 @@
     </div>
 
     <script>
-        const monthMap = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12};
         let globalData = [];
         let filteredData = [];
+        let doneMap = JSON.parse(localStorage.getItem('crmDoneMap') || '{}');
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('crmGlobalData');
+            if (saved) {
+                globalData = JSON.parse(saved);
+                document.getElementById('fileStatus').innerText = "Data loaded from memory";
+                document.getElementById('fileNameDisp').innerText = "Click Reset Data to upload a new file";
+                updateStats();
+                showView();
+                renderTable();
+            }
+        });
 
         document.getElementById('excelFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-            document.getElementById('fileNameDisp').innerText = file.name;
-            document.getElementById('fileStatus').innerText = "DATABASE SYNCED";
-            document.getElementById('fileStatus').classList.add('text-blue-600');
             
+            document.getElementById('fileStatus').innerText = "Processing...";
+            document.getElementById('fileNameDisp').innerText = file.name;
+
             const reader = new FileReader();
-            reader.onload = (evt) => {
-                const workbook = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
                 const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                
+                if (jsonData.length > 0 && !jsonData[0]['Name'] && !jsonData[0]['Nama']) {
+                    alert("Error: Kolom 'Name' (atau 'Nama') wajib ada di baris pertama Excel Anda!");
+                    document.getElementById('fileStatus').innerText = "Drop your Excel file here";
+                    return;
+                }
                 processInitialData(jsonData);
             };
             reader.readAsArrayBuffer(file);
         });
 
+        function getMonthNum(str) {
+            if(!str) return null;
+            str = str.toString().toLowerCase().trim();
+            const map = {
+                'january':1, 'januari':1, 'jan':1,
+                'february':2, 'februari':2, 'feb':2,
+                'march':3, 'maret':3, 'mar':3,
+                'april':4, 'apr':4,
+                'may':5, 'mei':5,
+                'june':6, 'juni':6, 'jun':6,
+                'july':7, 'juli':7, 'jul':7,
+                'august':8, 'agustus':8, 'aug':8, 'agu':8,
+                'september':9, 'sep':9,
+                'october':10, 'oktober':10, 'oct':10, 'okt':10,
+                'november':11, 'nov':11,
+                'december':12, 'desember':12, 'dec':12, 'des':12
+            };
+            return map[str] || null;
+        }
+
         function processInitialData(data) {
             const today = luxon.DateTime.now().startOf('day');
-            globalData = data.map(row => {
-                const day = parseInt(row['Anniversary day']);
-                const month = monthMap[row['Anniversary month']];
-                if (!day || !month) return null;
+            globalData = data.map((row, index) => {
+                const day = parseInt(row['Anniversary day'] || row['Tanggal']);
+                const mStr = row['Anniversary month'] || row['Bulan'];
+                const month = getMonthNum(mStr);
+                const name = row['Name'] || row['Nama'];
+                if (!day || !month || !name) return null;
 
                 let bday = luxon.DateTime.fromObject({ year: today.year, month: month, day: day });
                 if (bday < today) bday = bday.plus({ years: 1 });
@@ -172,12 +217,15 @@
 
                 return status ? { 
                     ...row, 
+                    id: index,
+                    Name: name,
                     h_val: Math.floor(diff), 
                     calculatedStatus: status,
-                    formattedDate: `${day} ${row['Anniversary month']}`
+                    formattedDate: `${day} ${mStr}`
                 } : null;
             }).filter(x => x !== null).sort((a, b) => a.h_val - b.h_val);
 
+            localStorage.setItem('crmGlobalData', JSON.stringify(globalData));
             updateStats();
             showView();
             renderTable();
@@ -196,6 +244,20 @@
             });
         }
 
+        function toggleDone(id) {
+            if (doneMap[id]) delete doneMap[id];
+            else doneMap[id] = true;
+            localStorage.setItem('crmDoneMap', JSON.stringify(doneMap));
+            renderTable();
+        }
+
+        function resetData() {
+            if(!confirm("Yakin ingin menghapus semua data dan status centang dari memori browser?")) return;
+            localStorage.removeItem('crmGlobalData');
+            localStorage.removeItem('crmDoneMap');
+            location.reload();
+        }
+
         function renderTable() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const filterValue = document.getElementById('statusFilter').value;
@@ -208,15 +270,26 @@
             });
 
             tbody.innerHTML = '';
+            const frag = document.createDocumentFragment();
+
             if (filteredData.length === 0) {
                 document.getElementById('noData').classList.remove('hidden');
             } else {
                 document.getElementById('noData').classList.add('hidden');
                 filteredData.forEach(row => {
-                    const wa = row.Telephone ? row.Telephone.toString().replace(/[^0-9]/g, '') : '';
+                    let wa = row.Telephone || row.WhatsApp || row.WA || '';
+                    wa = wa.toString().replace(/[^0-9]/g, '');
+                    if (wa.startsWith('0')) wa = '62' + wa.substring(1);
+                    
+                    const isDone = doneMap[row.id] ? 'checked' : '';
+                    const opacity = doneMap[row.id] ? 'opacity-40 grayscale' : '';
+
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50/80 transition-colors group";
+                    tr.className = `hover:bg-slate-50/80 transition-colors group ${opacity}`;
                     tr.innerHTML = `
+                        <td class="px-4 py-6 text-center">
+                            <input type="checkbox" ${isDone} onchange="toggleDone(${row.id})" class="w-6 h-6 cursor-pointer accent-emerald-500 rounded border-slate-300">
+                        </td>
                         <td class="px-8 py-6">
                             <div class="font-bold text-slate-800 text-lg group-hover:text-blue-600 transition-colors">${row.Name}</div>
                             <div class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-0.5">${row['Customer account'] || 'NO ACCOUNT'}</div>
@@ -244,8 +317,9 @@
                             </a>` : '<span class="text-slate-300 italic text-xs font-medium">No Contact</span>'}
                         </td>
                     `;
-                    tbody.appendChild(tr);
+                    frag.appendChild(tr);
                 });
+                tbody.appendChild(frag);
             }
         }
 
@@ -257,12 +331,13 @@
 
         function downloadExcel() {
             if (filteredData.length === 0) return alert("No data available to export");
-            const exportData = filteredData.map(({ h_val, calculatedStatus, formattedDate, ...rest }) => ({
-                'Name': rest.Name,
-                'WhatsApp': rest.Telephone,
-                'Birthday': formattedDate,
-                'H-Days': h_val,
-                'Urgency': calculatedStatus
+            const exportData = filteredData.map(item => ({
+                'Name': item.Name,
+                'WhatsApp': item.Telephone || item.WA || item.WhatsApp,
+                'Birthday': item.formattedDate,
+                'H-Days': item.h_val,
+                'Urgency': item.calculatedStatus,
+                'Status': doneMap[item.id] ? 'DONE' : 'PENDING'
             }));
             const worksheet = XLSX.utils.json_to_sheet(exportData);
             const workbook = XLSX.utils.book_new();
