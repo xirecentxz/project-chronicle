@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Lonely Desert Road</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #e8b923; touch-action: none; }
+        #ui { 
+            position: absolute; top: 20px; width: 100%; text-align: center; 
+            color: white; font-family: 'Courier New', monospace; font-size: 22px; 
+            text-shadow: 2px 2px 5px #000; z-index: 10; pointer-events: none; 
+        }
+        .controls { 
+            position: absolute; bottom: 50px; width: 100%; 
+            display: flex; justify-content: space-around; z-index: 20; 
+        }
+        .btn { 
+            width: 85px; height: 85px; background: rgba(255,255,255,0.2); 
+            border: 3px solid white; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            color: white; font-weight: bold; font-family: sans-serif;
+            transition: all 0.1s ease; user-select: none; -webkit-user-select: none;
+        }
+        .btn.active, .btn:active { 
+            background: rgba(255,255,255,0.5); transform: scale(0.9); 
+            box-shadow: 0 0 15px white; 
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">WAKTU BERTAHAN: <span id="timer">0</span>s</div>
+    
+    <div class="controls">
+        <div id="leftBtn" class="btn">KIRI</div>
+        <div id="rightBtn" class="btn">KANAN</div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // --- KONFIGURASI UTAMA ---
+        const LEBAR_ASPAL = 10;
+        const OFFSET_TRUK = 3; // <--- EDIT DI SINI: Geser visual truk (Ganti ke -2.5, -3, atau -3.5 agar pas tengah)
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xe8b923);
+        scene.fog = new THREE.Fog(0xe8b923, 15, 90);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 1));
+        const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+        sun.position.set(5, 10, 5);
+        scene.add(sun);
+
+        // Aspal
+        const road = new THREE.Mesh(
+            new THREE.BoxGeometry(LEBAR_ASPAL, 0.1, 50000),
+            new THREE.MeshStandardMaterial({ color: 0x333333 })
+        );
+        scene.add(road);
+
+        // Tanah
+        const ground = new THREE.Mesh(
+            new THREE.PlaneGeometry(1000, 50000),
+            new THREE.MeshStandardMaterial({ color: 0xd2b48c })
+        );
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.15;
+        scene.add(ground);
+
+        const loader = new GLTFLoader();
+        let truckContainer = null;
+        let moveState = 0; 
+        let driftPower = (Math.random() - 0.5) * 0.04;
+        const obstacles = [];
+
+        // 1. Load Truk
+        loader.load('./assets/Truckk.glb', (gltf) => {
+            const truckModel = gltf.scene;
+            truckModel.scale.set(0.8, 0.8, 0.8);
+            truckModel.rotation.y = Math.PI * 1.5; 
+            
+            // Mengatur posisi visual di dalam container agar pas di tengah jalan
+            truckModel.position.x = OFFSET_TRUK; 
+
+            truckContainer = new THREE.Group();
+            truckContainer.add(truckModel);
+            scene.add(truckContainer);
+        });
+
+        // 2. Load Rintangan
+        const obstacleModels = [];
+        const obsFiles = ['./assets/Cactus A.glb', './assets/Cactus Model.glb', './assets/Rock.glb'];
+        
+        obsFiles.forEach(file => {
+            loader.load(file, (gltf) => {
+                obstacleModels.push(gltf.scene);
+                if (obstacleModels.length === obsFiles.length) spawnInitialObstacles();
+            });
+        });
+
+        function spawnInitialObstacles() {
+            for (let i = 0; i < 40; i++) {
+                createObstacle(-i * 40 - 50);
+            }
+        }
+
+        function createObstacle(zPos) {
+            if (obstacleModels.length === 0) return;
+            const randIdx = Math.floor(Math.random() * obstacleModels.length);
+            const obs = obstacleModels[randIdx].clone();
+            
+            const side = Math.random() > 0.5 ? 1 : -1;
+            // Kaktus ditaruh di luar aspal (X > 7.5 atau X < -7.5)
+            obs.position.set(side * (9 + Math.random() * 5), 0, zPos);
+            
+            // <--- EDIT DI SINI: Besar Kecil Kaktus/Batu (Ubah angka 0.7)
+            obs.scale.set(0.7, 0.7, 0.7); 
+            
+            scene.add(obs);
+            obstacles.push(obs);
+        }
+
+        // --- INPUT HANDLING ---
+        const lBtn = document.getElementById('leftBtn');
+        const rBtn = document.getElementById('rightBtn');
+
+        const updateInput = (dir, active) => {
+            moveState = dir;
+            if (active) {
+                if (dir === -1) lBtn.classList.add('active');
+                if (dir === 1) rBtn.classList.add('active');
+            } else {
+                lBtn.classList.remove('active');
+                rBtn.classList.remove('active');
+            }
+        };
+
+        lBtn.addEventListener('touchstart', (e) => { e.preventDefault(); updateInput(-1, true); });
+        rBtn.addEventListener('touchstart', (e) => { e.preventDefault(); updateInput(1, true); });
+        window.addEventListener('touchend', () => updateInput(0, false));
+        lBtn.addEventListener('mousedown', () => updateInput(-1, true));
+        rBtn.addEventListener('mousedown', () => updateInput(1, true));
+        window.addEventListener('mouseup', () => updateInput(0, false));
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowLeft") updateInput(-1, true);
+            if (e.key === "ArrowRight") updateInput(1, true);
+        });
+        window.addEventListener('keyup', (e) => updateInput(0, false));
+
+        // --- GAME LOOP ---
+        let startTime = Date.now();
+        const timerElement = document.getElementById('timer');
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (truckContainer) {
+                truckContainer.position.z -= 0.22;
+
+                truckContainer.position.x += driftPower;
+                if(Math.random() > 0.985) driftPower = (Math.random() - 0.5) * 0.05;
+
+                if(moveState === -1) truckContainer.position.x -= 0.14;
+                if(moveState === 1) truckContainer.position.x += 0.14;
+
+                // --- LOGIKA GAME OVER SIMETRIS ---
+                // Karena lebar jalan 15, batas kiri/kanan adalah 7.5
+                // Kita pakai angka 7.2 agar ban terlihat pas menyentuh pasir sebelum kalah
+                if(Math.abs(truckContainer.position.x) > 7.2) { 
+                    alert("Game Over! Bertahan: " + timerElement.innerText + " detik.");
+                    truckContainer.position.x = 0; // Reset ke tengah aspal secara logika
+                    startTime = Date.now();
+                }
+
+                camera.position.x = truckContainer.position.x;
+                camera.position.y = 4.5;
+                camera.position.z = truckContainer.position.z + 14;
+                camera.lookAt(truckContainer.position.x, 2, truckContainer.position.z - 10);
+
+                timerElement.innerText = Math.floor((Date.now() - startTime) / 1000);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>

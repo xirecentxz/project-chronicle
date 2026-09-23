@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kotodama Ritual - Onmyoji Game</title>
+    <link rel="stylesheet" href="style.css?v=1.5">
+</head>
+<body>
+    <div class="game-container">
+        <div class="level-banner" id="level-banner">Level 1 (Hewan)</div>
+
+        <div class="header">
+            <div class="hp-section">
+                <div class="hp-bar">
+                    <div class="hp-fill" id="hp-fill"></div>
+                    <span class="hp-text">YOKAI HP</span>
+                </div>
+            </div>
+            <div class="timer-section">
+                <span id="time-val">90</span>s ⏳
+            </div>
+        </div>
+
+        <div class="word-zone" id="word-zone">
+            <div class="letter-slot"></div>
+            <div class="letter-slot"></div>
+            <div class="letter-slot"></div>
+            <div class="letter-slot"></div>
+            <div class="letter-slot"></div>
+            <div class="letter-slot"></div>
+            <div class="letter-slot"></div>
+        </div>
+
+        <div class="support-container" id="support-container"></div>
+
+        <div class="controls">
+            <button onclick="clearWord()" class="btn btn-clear">Hapus</button>
+            <button id="confirm-btn" onclick="confirmWord()" class="btn btn-confirm" disabled>SEGEL!</button>
+            <button id="romaji-toggle-btn" onclick="toggleRomaji()" class="btn btn-romaji">Romaji: OFF</button>
+            <button id="hint-btn" onclick="showHint()" class="btn btn-hint">Onmyouroku</button>
+            <button onclick="shuffleDeck()" class="btn btn-shuffle">Acak (-3s)</button>
+        </div>
+
+        <div class="card-area">
+            <div class="deck-status">🎴 <span id="deck-val">71</span> Kartu</div>
+            <div class="hand" id="player-hand"></div>
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="overlay">
+        <div class="modal">
+            <h2 id="modal-title">RITUAL BERHASIL!</h2>
+            <p id="modal-desc">Yokai telah tersegel ke dalam kitab.</p>
+            <div class="modal-buttons">
+                <button id="btn-prev" class="btn btn-nav" onclick="changeLevel(-1)">Level Sebelumnya</button>
+                <button class="btn btn-retry" onclick="retryLevel()">Main Lagi</button>
+                <button id="btn-next" class="btn btn-nav" onclick="changeLevel(1)">Next Level</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=1.5"></script>
+</body>
+</html>

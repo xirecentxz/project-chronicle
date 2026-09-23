@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Who is Your Waifu? — Summoning Circle</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     ============================================================ */
+  :root{
+    --bg-deep:      #0a0817;
+    --bg-panel:     #130f27;
+    --bg-panel-2:   #1a1436;
+    --line:         rgba(255,255,255,0.09);
+
+    --pink:         #ff4fa3;
+    --pink-soft:    rgba(255, 79, 163, 0.35);
+    --cyan:         #47e8d4;
+    --cyan-soft:    rgba(71, 232, 212, 0.30);
+    --gold:         #ffcf5c;
+
+    --text:         #f3efff;
+    --muted:        #a79dc7;
+    --muted-dim:    #6f6693;
+
+    --font-display: 'Baloo 2', system-ui, sans-serif;
+    --font-body:    'Manrope', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+    --radius-lg: 28px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: var(--font-body);
+  }
+
+  body{
+    position:relative;
+    overflow-x:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 48px 20px 64px;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    background:
+      radial-gradient(600px 500px at 15% 10%, rgba(255,79,163,0.16), transparent 60%),
+      radial-gradient(700px 600px at 85% 90%, rgba(71,232,212,0.13), transparent 60%),
+      var(--bg-deep);
+  }
+
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    opacity:0.5;
+    background-image:
+      radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,0.5) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 70% 65%, rgba(255,255,255,0.4) 50%, transparent 51%),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.35) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 90% 20%, rgba(255,255,255,0.4) 50%, transparent 51%),
+      radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,0.3) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 10% 70%, rgba(255,255,255,0.4) 50%, transparent 51%);
+    background-repeat: repeat;
+    background-size: 340px 340px;
+  }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    letter-spacing: 0.25em;
+    font-size: 11px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.85;
+  }
+
+  h1{
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(32px, 6vw, 54px);
+    line-height: 1.05;
+    margin: 0 0 10px;
+    text-align:center;
+    background: linear-gradient(100deg, var(--pink) 0%, #ffb0d9 30%, var(--cyan) 70%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .subtitle{
+    text-align:center;
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 480px;
+    margin: 0 0 36px;
+    line-height:1.6;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 460px;
+    background: linear-gradient(180deg, var(--bg-panel), var(--bg-panel-2));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+    margin-bottom: 40px;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+
+  .field label{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-dim);
+  }
+
+  /* ============================================================
+     GLASSMORPHISM SELECT DROPDOWN
+     ============================================================ */
+  .select-wrapper {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+
+  .select-wrapper:hover {
+    border-color: rgba(71, 232, 212, 0.4);
+    box-shadow: 0 0 20px rgba(71, 232, 212, 0.05);
+  }
+
+  .select-wrapper:focus-within {
+    border-color: var(--cyan);
+    box-shadow: 0 0 25px rgba(71, 232, 212, 0.1);
+  }
+
+  .select-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 12px 45px 12px 16px;
+    width: 100%;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    outline: none;
+  }
+
+  .select-wrapper select option {
+    background: #1a1436;
+    color: var(--text);
+    padding: 10px;
+  }
+
+  /* Custom arrow */
+  .select-wrapper::after {
+    content: "▾";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--cyan);
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 1;
+    transition: transform 0.3s ease;
+  }
+
+  .select-wrapper:hover::after {
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  /* Glass reflection effect */
+  .select-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: skewX(-25deg);
+    pointer-events: none;
+    z-index: 0;
+    transition: left 0.6s ease;
+  }
+
+  .select-wrapper:hover::before {
+    left: 150%;
+  }
+
+  #generateBtn{
+    position:relative;
+    border:none;
+    cursor:pointer;
+    padding: 15px 20px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.01em;
+    color: #170b1e;
+    background: linear-gradient(95deg, var(--gold), var(--pink) 55%, var(--cyan) 110%);
+    background-size: 180% 100%;
+    background-position: 0% 0%;
+    transition: background-position 0.5s ease, transform 0.15s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 30px -8px var(--pink-soft);
+  }
+
+  #generateBtn:hover{
+    background-position: 100% 0%;
+    box-shadow: 0 14px 36px -8px var(--pink-soft);
+  }
+
+  #generateBtn:active{
+    transform: scale(0.97);
+  }
+
+  #generateBtn:disabled{
+    cursor:not-allowed;
+    opacity:0.7;
+    transform:none;
+  }
+
+  .stage{
+    position:relative;
+    width: min(360px, 84vw);
+    aspect-ratio: 3 / 4;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom: 28px;
+  }
+
+  .ring{
+    position:absolute;
+    border-radius:50%;
+    border: 2px dashed var(--cyan-soft);
+    animation: spin 18s linear infinite;
+  }
+  .ring.r1{ width:112%; height: 92%; border-color: rgba(255,79,163,0.28); animation-duration: 22s; }
+  .ring.r2{ width:98%;  height: 80%; border-style: solid; border-width:1px; animation-duration: 14s; animation-direction: reverse; }
+  .ring.r3{ width:84%;  height: 68%; animation-duration: 9s; }
+
+  .stage.charging .ring{ animation-duration: 0.8s; }
+  .stage.charging .ring.r2{ animation-duration: 0.6s; }
+  .stage.charging .ring.r3{ animation-duration: 0.4s; }
+
+  @keyframes spin{
+    from{ transform: rotate(0deg); }
+    to{ transform: rotate(360deg); }
+  }
+
+  .card{
+    position:relative;
+    width: 82%;
+    height: 90%;
+    border-radius: var(--radius-lg);
+    overflow:hidden;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 30px 60px -25px rgba(0,0,0,0.7);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .card-placeholder{
+    text-align:center;
+    padding: 20px;
+    color: var(--muted-dim);
+    font-size: 13px;
+    line-height:1.6;
+  }
+
+  .card-placeholder .glyph{
+    font-size: 34px;
+    display:block;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 12px var(--pink-soft));
+  }
+
+  .card img{
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    opacity:0;
+    transform: scale(1.05);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+
+  .card img.shown{
+    opacity:1;
+    transform: scale(1);
+  }
+
+  .flash{
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,255,255,0) 65%);
+    opacity:0;
+    pointer-events:none;
+  }
+  .flash.play{
+    animation: flash-pop 0.6s ease-out forwards;
+  }
+  @keyframes flash-pop{
+    0%{ opacity:0.9; }
+    100%{ opacity:0; }
+  }
+
+  .meta-overlay{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    padding: 16px 16px 14px;
+    background: linear-gradient(0deg, rgba(6,4,16,0.92) 10%, rgba(6,4,16,0.55) 60%, transparent 100%);
+    transform: translateY(100%);
+    transition: transform 0.4s ease;
+  }
+  .meta-overlay.show{ transform: translateY(0); }
+
+  .rating-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #06231c;
+    background: var(--cyan);
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  .char-name{
+    font-family: var(--font-display);
+    font-weight:700;
+    font-size: 19px;
+    margin: 0 0 3px;
+    color: var(--text);
+  }
+
+  .artist-name{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gold);
+    margin:0;
+  }
+
+  .source-link{
+    display:inline-block;
+    margin-top:8px;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration:none;
+    border-bottom: 1px dotted var(--muted-dim);
+  }
+  .source-link:hover{ color: var(--cyan); border-color: var(--cyan); }
+
+  .status{
+    min-height: 20px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    text-align:center;
+    max-width: 380px;
+    margin-bottom: 20px;
+  }
+  .status.is-error{ color: #ff8fa8; }
+  .status .api-name{
+    color: var(--cyan);
+    font-weight: 600;
+  }
+
+  footer{
+    margin-top: auto;
+    padding-top: 20px;
+    font-size: 11px;
+    color: var(--muted-dim);
+    text-align:center;
+  }
+  footer a{ color: var(--muted); }
+  footer a:hover{ color: var(--cyan); }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  .glyph {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .ring{ animation: none; }
+    .card img, .meta-overlay, #generateBtn{ transition: none; }
+    .flash.play{ animation: none; }
+    .glyph { animation: none; }
+    .select-wrapper::before { display: none; }
+  }
+
+  @media (max-width: 420px){
+    .panel{ padding:16px; }
+    h1{ font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+  <p class="eyebrow">✦ Gacha Summoning Circle ✦</p>
+  <h1>Who is Your Waifu?</h1>
+  <p class="subtitle">Pilih kategori waifu favoritmu, tekan tombol, dan saksikan lingkaran pemanggilan bekerja! ✨</p>
+
+  <div class="panel">
+    <div class="field">
+      <label for="categorySelect">Pilih Kategori</label>
+      
+      <!-- GLASSMORPHISM SELECT WRAPPER -->
+      <div class="select-wrapper">
+        <select id="categorySelect">
+          <option value="random">🎲 Random</option>
+          <option value="waifu">💕 Waifu</option>
+          <option value="neko">🐱 Neko</option>
+          <option value="hug">🤗 Hug</option>
+          <option value="kiss">💋 Kiss</option>
+          <option value="pat">🖐️ Pat</option>
+          <option value="smug">😏 Smug</option>
+          <option value="cuddle">🤗 Cuddle</option>
+          <option value="cry">😢 Cry</option>
+          <option value="wave">👋 Wave</option>
+          <option value="tickle">🤭 Tickle</option>
+        </select>
+      </div>
+    </div>
+    <button id="generateBtn" type="button">🎴 Panggil Waifu</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="ring r1"></div>
+    <div class="ring r2"></div>
+    <div class="ring r3"></div>
+    <div class="card" id="card">
+      <div class="card-placeholder" id="placeholder">
+        <span class="glyph">🌙</span>
+        Lingkaran masih diam.<br>Tekan tombol untuk memanggil waifu pertamamu.
+      </div>
+      <img id="waifuImg" alt="">
+      <div class="flash" id="flash"></div>
+      <div class="meta-overlay" id="metaOverlay">
+        <span class="rating-badge" id="ratingBadge">✓ SFW</span>
+        <p class="char-name" id="charName"></p>
+        <p class="artist-name" id="artistName"></p>
+        <a class="source-link" id="sourceLink" href="#" target="_blank" rel="noopener noreferrer">🔗 Lihat gambar asli →</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="status" id="status"></p>
+
+  <footer>
+    Digerakkan oleh <a href="https://nekos.life" target="_blank" rel="noopener noreferrer">Nekos.life</a> · Semua gambar milik senimannya masing-masing.
+  </footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     KONFIGURASI - Nekos.life API
+     ============================================================ */
+  const API_BASE = "https://nekos.life/api/v2/img";
+  
+  const CATEGORIES = [
+    'waifu', 'neko', 'hug', 'kiss', 'pat', 'smug',
+    'cuddle', 'cry', 'wave', 'tickle'
+  ];
+
+  const categorySelect = document.getElementById("categorySelect");
+  const generateBtn  = document.getElementById("generateBtn");
+  const stage        = document.getElementById("stage");
+  const card         = document.getElementById("card");
+  const placeholder  = document.getElementById("placeholder");
+  const waifuImg     = document.getElementById("waifuImg");
+  const flash        = document.getElementById("flash");
+  const metaOverlay  = document.getElementById("metaOverlay");
+  const charNameEl   = document.getElementById("charName");
+  const artistNameEl = document.getElementById("artistName");
+  const sourceLinkEl = document.getElementById("sourceLink");
+  const statusEl     = document.getElementById("status");
+
+  let lastShownUrl = null;
+  let isFirstLoad = true;
+
+  /* ============================================================
+     HELPERS
+     ============================================================ */
+
+  function setStatus(message, isError){
+    statusEl.textContent = message || "";
+    statusEl.classList.toggle("is-error", Boolean(isError));
+  }
+
+  function setLoading(isLoading){
+    generateBtn.disabled = isLoading;
+    stage.classList.toggle("charging", isLoading);
+  }
+
+  function pickRandom(arr){
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function getCategoryName(category) {
+    const names = {
+      'waifu': 'Waifu',
+      'neko': 'Neko',
+      'hug': 'Hug',
+      'kiss': 'Kiss',
+      'pat': 'Pat',
+      'smug': 'Smug',
+      'cuddle': 'Cuddle',
+      'cry': 'Cry',
+      'wave': 'Wave',
+      'tickle': 'Tickle'
+    };
+    return names[category] || category;
+  }
+
+  /* ============================================================
+     API FETCHING
+     ============================================================ */
+
+  async function fetchWaifu(category) {
+    try {
+      const url = `${API_BASE}/${category}`;
+      console.log(`📡 Fetching: ${url}`);
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`✅ Response:`, data);
+      
+      if (!data.url) {
+        throw new Error('Tidak ada gambar ditemukan');
+      }
+      
+      return {
+        url: data.url,
+        category: category,
+        artist_name: `Nekos.life - ${getCategoryName(category)}`,
+        id: Date.now().toString(),
+        source_url: data.url
+      };
+    } catch (error) {
+      console.error(`❌ Error fetching ${category}:`, error);
+      throw new Error(`Gagal mengambil gambar: ${error.message}`);
+    }
+  }
+
+  async function fetchRandomWaifu() {
+    const category = pickRandom(CATEGORIES);
+    return await fetchWaifu(category);
+  }
+
+  /* ============================================================
+     RENDERING
+     ============================================================ */
+
+  function renderWaifu(image){
+    placeholder.style.display = "none";
+
+    waifuImg.classList.remove("shown");
+    waifuImg.src = "";
+    
+    waifuImg.src = image.url;
+    waifuImg.alt = `Waifu dari kategori ${image.category}`;
+
+    waifuImg.onload = () => {
+      console.log(`🖼️ Image loaded: ${image.url}`);
+      waifuImg.classList.add("shown");
+      
+      flash.classList.remove("play");
+      void flash.offsetWidth;
+      flash.classList.add("play");
+    };
+
+    waifuImg.onerror = () => {
+      console.error(`❌ Image failed to load: ${image.url}`);
+      setStatus("Gambar gagal dimuat, coba lagi.", true);
+    };
+
+    const categoryDisplay = getCategoryName(image.category);
+    charNameEl.textContent = categoryDisplay;
+    charNameEl.style.display = "";
+
+    artistNameEl.textContent = `🎨 ${categoryDisplay}`;
+    artistNameEl.style.display = "";
+
+    if (image.source_url){
+      sourceLinkEl.href = image.source_url;
+      sourceLinkEl.textContent = "🔗 Lihat gambar asli →";
+      sourceLinkEl.style.display = "";
+    } else {
+      sourceLinkEl.style.display = "none";
+    }
+
+    metaOverlay.classList.add("show");
+    lastShownUrl = image.url;
+  }
+
+  /* ============================================================
+     MAIN ACTION
+     ============================================================ */
+
+  async function handleGenerate(){
+    setLoading(true);
+    setStatus("🔄 Memanggil dari alam waifu…");
+    metaOverlay.classList.remove("show");
+
+    try {
+      const mode = categorySelect.value;
+      let image;
+
+      if (mode === "random"){
+        image = await fetchRandomWaifu();
+      } else {
+        image = await fetchWaifu(mode);
+      }
+
+      if (image.url === lastShownUrl && mode === "random") {
+        console.log('🔄 Same image, fetching another...');
+        image = await fetchRandomWaifu();
+      }
+
+      renderWaifu(image);
+      
+      const categoryDisplay = getCategoryName(image.category);
+      setStatus(`✨ ${categoryDisplay} berhasil dipanggil! ✨`);
+      
+    } catch (err) {
+      console.error('❌ Error:', err);
+      setStatus(`❌ ${err.message || "Gagal memanggil waifu, coba lagi."}`, true);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /* ============================================================
+     EVENT LISTENERS
+     ============================================================ */
+
+  generateBtn.addEventListener("click", handleGenerate);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !generateBtn.disabled) {
+      handleGenerate();
+    }
+  });
+
+  /* ============================================================
+     AUTO-GENERATE PERTAMA KALI
+     ============================================================ */
+  
+  setTimeout(() => {
+    if (isFirstLoad) {
+      isFirstLoad = false;
+      handleGenerate();
+    }
+  }, 1000);
+
+  console.log('🎴 Who is Your Waifu? — Summoning Circle ready!');
+  console.log(`📚 Available categories: ${CATEGORIES.join(', ')}`);
+
+})();
+</script>
+</body>
+</html>

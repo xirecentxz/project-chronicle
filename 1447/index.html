@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Idul Fitri 1 Syawal 1447 H</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-blue: #000f27;
+            --gold: #d4af37;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: url('background.webp') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            padding: 20px;
+            overflow: hidden; /* Mencegah scroll saat animasi kembang api */
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 10, 30, 0.6);
+            z-index: 0;
+        }
+
+        /* --- ANIMASI FADE IN & FLOATING --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* --- EFEK KEMBANG API (CSS Only) --- */
+        .firework {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            box-shadow: 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff;
+            animation: firework 2s infinite;
+            z-index: 1;
+        }
+
+        @keyframes firework {
+            0% { transform: translate(-50%, 60vh); width: 4px; opacity: 1; }
+            50% { width: 4px; opacity: 1; }
+            100% { 
+                width: 500px; 
+                opacity: 0; 
+                box-shadow: 0 -200px var(--gold), 150px -150px #fff, 200px 0 var(--gold), 150px 150px #fff, 0 200px var(--gold), -150px 150px #fff, -200px 0 var(--gold), -150px -150px #fff;
+            }
+        }
+
+        /* Container Utama */
+        .main-wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 440px;
+            align-items: center;
+        }
+
+        /* Standarisasi Kotak Glassium dengan Animasi */
+        .glass-card {
+            position: relative;
+            width: 100%;
+            height: 45vh;
+            min-height: 350px;
+            padding: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            overflow: hidden;
+            
+            /* Animasi Fade In */
+            opacity: 0;
+            animation: fadeInUp 1.2s ease-out forwards;
+        }
+
+        /* Kotak pertama animasi floating, kotak kedua delay */
+        .glass-card:nth-child(1) { 
+            animation: fadeInUp 1.2s ease-out forwards, floating 6s ease-in-out infinite 1.2s; 
+        }
+        .glass-card:nth-child(2) { 
+            animation-delay: 0.4s; /* Muncul sedikit terlambat */
+        }
+
+        .img-container img {
+            width: 85%;
+            height: auto;
+            max-height: 80%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.3));
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .year {
+            font-size: 1rem;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .main-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .closing {
+            font-weight: 400;
+            color: var(--gold);
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        .asset-foto {
+            position: absolute;
+            bottom: -30px;
+            left: -100px;
+            width: 400px;
+            opacity: 0.2;
+            z-index: -1;
+            mask-image: linear-gradient(to top right, rgba(0,0,0,1), rgba(0,0,0,0));
+            -webkit-mask-image: linear-gradient(to top right, rgba(0,0,0,1), rgba(0,0,0,0));
+        }
+
+        .decoration {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 25px;
+            opacity: 0.3;
+            color: var(--gold);
+        }
+
+        @media (min-width: 992px) {
+            .main-wrapper {
+                flex-direction: row;
+                max-width: 900px;
+                height: 80vh;
+                align-items: stretch;
+            }
+            .glass-card { height: auto; flex: 1; }
+            h1 { font-size: 1.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="firework" style="left: 15%; animation-delay: 0.5s;"></div>
+    <div class="firework" style="left: 85%; animation-delay: 1.2s;"></div>
+    <div class="firework" style="left: 50%; top: 30%; animation-delay: 2s;"></div>
+
+    <div class="main-wrapper">
+        <div class="glass-card img-container">
+            <img src="kal-Photoroom.webp" alt="Eid Mubarak Calligraphy">
+        </div>
+
+        <div class="glass-card">
+            <div class="decoration">☪</div>
+            
+            <h1>Taqabbalallahu Minna Wa Minkum</h1>
+            <div class="year">1 Syawal 1447 H</div>
+
+            <p class="main-text">
+                <strong>Selamat Hari Raya Idul Fitri.</strong><br>
+                Mohon maaf lahir dan batin atas segala kekhilafan. Semoga silaturahmi kita tetap terjaga meski jarak memisahkan.
+            </p>
+
+            <p class="closing">Selamat berkumpul dengan keluarga tercinta!</p>
+
+            <img src="orang.webp" alt="Background Profile" class="asset-foto">
+        </div>
+    </div>
+
+</body>
+</html>
